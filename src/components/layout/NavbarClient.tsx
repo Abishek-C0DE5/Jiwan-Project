@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BookOpen,
+  ChevronsLeft,
+  ChevronsRight,
   FileText,
   GraduationCap,
   Home,
@@ -12,8 +14,6 @@ import {
   LogIn,
   LogOut,
   Menu,
-  PanelLeftClose,
-  PanelLeftOpen,
   PlaySquare,
   Plus,
   ShieldCheck,
@@ -74,7 +74,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
   const renderSidebarBody = (isCollapsed: boolean, isMobile = false) => (
     <div
       className={cn(
-        "flex h-full flex-col justify-between bg-white border-r border-emerald-100 py-5 transition-all duration-300",
+        "flex h-full flex-col justify-between bg-white border-r border-border py-5 transition-all duration-300",
         isCollapsed ? "px-3" : "px-4"
       )}
     >
@@ -92,7 +92,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               onClick={() => setMobileOpen(false)}
               className="flex items-center gap-2.5 min-w-0"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#065f46] text-white shadow-xs">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#6d28d9] text-white shadow-xs">
                 <GraduationCap className="h-5 w-5" />
               </span>
               <div className="min-w-0">
@@ -100,7 +100,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                   StudyHub
                 </span>
                 <span className="text-[11px] font-medium text-muted-foreground">
-                  Student Platform
+                  Learn · Practice · Grow
                 </span>
               </div>
             </Link>
@@ -112,12 +112,12 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               onClick={() => setCollapsed((prev) => !prev)}
               title={isCollapsed ? "Expand sidebar" : "Minimize sidebar"}
               aria-label={isCollapsed ? "Expand sidebar" : "Minimize sidebar"}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#52665a] hover:bg-[#e6f4ec] hover:text-[#065f46] transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-[#ede9fe] hover:text-[#5b21b6] transition-colors cursor-pointer"
             >
               {isCollapsed ? (
-                <PanelLeftOpen className="h-4 w-4" />
+                <ChevronsRight className="h-4 w-4" />
               ) : (
-                <PanelLeftClose className="h-4 w-4" />
+                <ChevronsLeft className="h-4 w-4" />
               )}
             </button>
           )}
@@ -132,7 +132,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
         >
           <Button
             className={cn(
-              "w-full bg-[#147a4b] hover:bg-[#065f46] text-white shadow-xs",
+              "w-full rounded-xl bg-[#6d28d9] hover:bg-[#5b21b6] text-white shadow-xs",
               isCollapsed ? "px-0 justify-center" : "justify-center gap-2"
             )}
           >
@@ -144,7 +144,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
         {/* Navigation Links */}
         <div className="space-y-1.5">
           {!isCollapsed && (
-            <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#7c8e83]">
+            <p className="px-3 text-[11px] font-semibold text-muted-foreground">
               Menu
             </p>
           )}
@@ -160,14 +160,19 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                   title={isCollapsed ? item.label : undefined}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "flex items-center rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
+                    "flex items-center rounded-xl py-2.5 text-sm font-medium transition-all duration-200",
                     isCollapsed ? "justify-center px-0" : "gap-3 px-3",
                     active
-                      ? "bg-[#065f46] text-white shadow-xs"
-                      : "text-[#4b5e53] hover:bg-[#e6f4ec] hover:text-[#064e3b]"
+                      ? "bg-[#ede9fe] text-[#5b21b6] font-semibold"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0" />
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 shrink-0",
+                      active ? "text-[#6d28d9]" : ""
+                    )}
+                  />
                   {!isCollapsed && <span>{item.label}</span>}
                 </Link>
               );
@@ -179,11 +184,11 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                 title={isCollapsed ? "Admin Moderation" : undefined}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
+                  "flex items-center rounded-xl py-2.5 text-sm font-medium transition-all duration-200",
                   isCollapsed ? "justify-center px-0" : "gap-3 px-3",
                   pathname.startsWith("/admin")
-                    ? "bg-[#065f46] text-white shadow-xs"
-                    : "text-[#4b5e53] hover:bg-[#e6f4ec] hover:text-[#064e3b]"
+                    ? "bg-[#ede9fe] text-[#5b21b6] font-semibold"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <ShieldCheck className="h-4 w-4 shrink-0" />
@@ -195,7 +200,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
       </div>
 
       {/* Bottom Auth / Profile Section */}
-      <div className="pt-4 border-t border-emerald-100 space-y-2">
+      <div className="pt-4 border-t border-border space-y-2">
         {user ? (
           <>
             <Link
@@ -203,7 +208,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               title={isCollapsed ? profile?.full_name || "Profile" : undefined}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center rounded-xl p-2 hover:bg-[#e6f4ec] transition-colors",
+                "flex items-center rounded-xl p-2 hover:bg-muted transition-colors",
                 isCollapsed ? "justify-center" : "gap-3"
               )}
             >
@@ -214,10 +219,10 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               />
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-[#0c1b13]">
+                  <p className="truncate text-sm font-semibold text-foreground">
                     {profile?.full_name || "Student"}
                   </p>
-                  <p className="truncate text-xs text-[#52665a]">
+                  <p className="truncate text-xs text-muted-foreground">
                     View profile
                   </p>
                 </div>
@@ -230,7 +235,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               onClick={handleLogout}
               disabled={signingOut}
               className={cn(
-                "w-full text-[#52665a] hover:text-destructive hover:bg-red-50",
+                "w-full text-muted-foreground hover:text-destructive hover:bg-red-50",
                 isCollapsed ? "justify-center px-0" : "justify-start"
               )}
             >
@@ -251,7 +256,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               <Button
                 variant="outline"
                 className={cn(
-                  "w-full border-emerald-200 text-[#064e3b] hover:bg-[#e6f4ec]",
+                  "w-full",
                   isCollapsed ? "px-0 justify-center" : "justify-center gap-2"
                 )}
               >
@@ -268,7 +273,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
               <Button
                 variant="secondary"
                 className={cn(
-                  "w-full bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]",
+                  "w-full bg-[#ede9fe] text-[#5b21b6] hover:bg-violet-200/70",
                   isCollapsed ? "px-0 justify-center" : "justify-center gap-2"
                 )}
               >
@@ -295,12 +300,12 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
       </aside>
 
       {/* Mobile Top Bar */}
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-card/95 px-4 backdrop-blur-md lg:hidden">
+      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-white/95 px-4 backdrop-blur-md lg:hidden">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6d28d9] text-white">
             <GraduationCap className="h-5 w-5" />
           </span>
-          <span className="font-display text-lg font-bold text-foreground">
+          <span className="text-lg font-extrabold text-foreground">
             StudyHub
           </span>
         </Link>

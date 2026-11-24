@@ -99,8 +99,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           aria-expanded={open}
           onClick={() => !disabled && setOpen((prev) => !prev)}
           className={cn(
-            "flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#065f46]/30 focus-visible:border-[#065f46] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:border-emerald-300",
-            open && "border-[#065f46] ring-2 ring-[#065f46]/20",
+            "flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9]/30 focus-visible:border-[#6d28d9] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:border-violet-300",
+            open && "border-[#6d28d9] ring-2 ring-[#6d28d9]/20",
             className
           )}
           {...props}
@@ -110,8 +110,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           </span>
           <ChevronDown
             className={cn(
-              "h-4 w-4 shrink-0 text-[#52665a] transition-transform duration-200",
-              open && "rotate-180 text-[#065f46]"
+              "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
+              open && "rotate-180 text-[#6d28d9]"
             )}
           />
         </button>
@@ -119,7 +119,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
         {open && (
           <div
             role="listbox"
-            className="absolute left-0 right-0 z-50 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-emerald-100 bg-white p-1.5 shadow-lg animate-in fade-in-0 zoom-in-95 duration-100"
+            className="absolute left-0 right-0 z-50 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-border bg-white p-1.5 shadow-lg"
           >
             {options.map((opt) => {
               const active = opt.value === currentValue;
@@ -134,8 +134,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                   className={cn(
                     "flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors cursor-pointer",
                     active
-                      ? "bg-[#065f46] font-semibold text-white"
-                      : "text-[#14221b] hover:bg-[#e6f4ec] hover:text-[#064e3b]",
+                      ? "bg-[#6d28d9] font-semibold text-white"
+                      : "text-foreground hover:bg-[#ede9fe] hover:text-[#5b21b6]",
                     opt.disabled && "opacity-50 cursor-not-allowed"
                   )}
                 >

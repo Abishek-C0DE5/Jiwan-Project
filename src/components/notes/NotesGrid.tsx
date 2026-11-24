@@ -83,7 +83,7 @@ export function NotesGrid({
                     <div className="flex items-center justify-between gap-2">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white ${
-                          isPdf ? "bg-[#b45309]" : "bg-[#065f46]"
+                          isPdf ? "bg-[#d97706]" : "bg-[#6d28d9]"
                         }`}
                       >
                         {isPdf ? (
@@ -94,24 +94,24 @@ export function NotesGrid({
                         {isPdf ? "PDF Document" : "Written Note"}
                       </span>
 
-                      <span className="inline-flex items-center gap-1 text-xs text-[#52665a]">
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5" />
                         {formatDate(note.created_at)}
                       </span>
                     </div>
 
-                    {/* Subject & Level line (clean, no tag clutter) */}
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[#147a4b]">
+                    {/* Subject & Level line */}
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6d28d9]">
                       {note.subject} &middot; {note.education_level}
                     </p>
 
                     {/* Bold Title & Description */}
                     <div className="space-y-1.5">
-                      <h3 className="text-lg font-extrabold text-[#0c1b13] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
+                      <h3 className="text-lg font-extrabold text-foreground line-clamp-2 leading-snug group-hover:text-[#6d28d9] transition-colors">
                         {note.title}
                       </h3>
                       {note.description && (
-                        <p className="text-sm text-[#52665a] line-clamp-2 leading-relaxed">
+                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                           {note.description}
                         </p>
                       )}
@@ -119,13 +119,13 @@ export function NotesGrid({
                   </div>
 
                   {/* Clean Footer */}
-                  <div className="flex items-center justify-between pt-4 border-t border-emerald-100">
-                    <span className="text-xs font-medium text-[#52665a]">
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <span className="text-xs font-medium text-muted-foreground">
                       {isPdf
                         ? `PDF · ${formatFileSize(note.file_size)}`
                         : note.topic || "Study Summary"}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-sm font-bold text-[#065f46] group-hover:translate-x-0.5 transition-transform">
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-[#6d28d9] group-hover:translate-x-0.5 transition-transform">
                       {isPdf ? "View PDF" : "Read Note"}
                       <ArrowRight className="h-4 w-4" />
                     </span>

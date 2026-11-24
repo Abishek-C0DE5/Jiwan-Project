@@ -137,8 +137,8 @@ export function BookFilters({ categories }: BookFiltersProps) {
           }}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
             category === ""
-              ? "bg-[#065f46] text-white shadow-sm"
-              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+              ? "bg-[#6d28d9] text-white shadow-sm"
+              : "bg-[#ede9fe] text-[#5b21b6] hover:bg-violet-200/80"
           }`}
         >
           {category === "" && <Check className="h-3.5 w-3.5" />}
@@ -158,8 +158,8 @@ export function BookFilters({ categories }: BookFiltersProps) {
               }}
               className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                 active
-                  ? "bg-[#065f46] text-white shadow-sm"
-                  : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+                  ? "bg-[#6d28d9] text-white shadow-sm"
+                  : "bg-[#ede9fe] text-[#5b21b6] hover:bg-violet-200/80"
               }`}
             >
               {active && <Check className="h-3.5 w-3.5" />}

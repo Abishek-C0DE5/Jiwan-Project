@@ -75,8 +75,8 @@ function NotesFilterBar({ params }: { params: NotesSearchParams }) {
           href={buildTypeHref("")}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
             !params.type
-              ? "bg-[#065f46] text-white shadow-sm"
-              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+              ? "bg-[#6d28d9] text-white shadow-sm"
+              : "bg-[#ede9fe] text-[#5b21b6] hover:bg-violet-200/80"
           }`}
         >
           {!params.type && <Check className="h-3.5 w-3.5" />}
@@ -86,8 +86,8 @@ function NotesFilterBar({ params }: { params: NotesSearchParams }) {
           href={buildTypeHref("created")}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
             params.type === "created"
-              ? "bg-[#065f46] text-white shadow-sm"
-              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+              ? "bg-[#6d28d9] text-white shadow-sm"
+              : "bg-[#ede9fe] text-[#5b21b6] hover:bg-violet-200/80"
           }`}
         >
           {params.type === "created" && <Check className="h-3.5 w-3.5" />}
@@ -97,7 +97,7 @@ function NotesFilterBar({ params }: { params: NotesSearchParams }) {
           href={buildTypeHref("pdf")}
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
             params.type === "pdf"
-              ? "bg-[#b45309] text-white shadow-sm"
+              ? "bg-[#d97706] text-white shadow-sm"
               : "bg-amber-100 text-amber-900 hover:bg-amber-200/80"
           }`}
         >
