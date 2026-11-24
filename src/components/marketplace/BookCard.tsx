@@ -18,7 +18,7 @@ export function BookCard({ book }: BookCardProps) {
 
   return (
     <Link href={`/books/${book.id}`} className="group block h-full">
-      <Card className="flex h-full flex-col overflow-hidden border-emerald-100 bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+      <Card className="flex h-full flex-col overflow-hidden border-border bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
         {/* Book Image */}
         <div className="relative aspect-[3/2] bg-muted overflow-hidden">
           {book.images && book.images[0] ? (

@@ -96,11 +96,11 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                 <GraduationCap className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <span className="font-display text-lg font-extrabold tracking-tight text-[#0c1b13] block leading-none">
+                <span className="text-lg font-extrabold tracking-tight text-foreground block leading-none">
                   StudyHub
                 </span>
-                <span className="text-[11px] font-medium text-[#52665a]">
-                  Student Hub
+                <span className="text-[11px] font-medium text-muted-foreground">
+                  Student Platform
                 </span>
               </div>
             </Link>

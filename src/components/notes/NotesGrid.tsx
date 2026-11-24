@@ -76,7 +76,7 @@ export function NotesGrid({
           const isPdf = note.note_type === "pdf";
           return (
             <Link key={note.id} href={`/notes/${note.id}`} className="group">
-              <Card className="h-full border-emerald-100 bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+              <Card className="h-full border-border bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
                 <CardContent className="p-6 flex h-full flex-col justify-between space-y-5">
                   <div className="space-y-3.5">
                     {/* Top row: Solid Filled Format Pill + Date */}

@@ -58,7 +58,7 @@ export function BookFilters({ categories }: BookFiltersProps) {
   );
 
   return (
-    <div className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-xs">
+    <div className="space-y-4 rounded-2xl border border-border bg-white p-5 shadow-xs">
       {/* Row 1: Simple Search + Quick Filters */}
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
         <form

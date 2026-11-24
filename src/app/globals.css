@@ -2,20 +2,20 @@
 
 :root {
   --sidebar-width: 256px;
-  --background: #f7f9f7;
-  --foreground: #0c1b13;
+  --background: #fafafa;
+  --foreground: #09090b;
   --card: #ffffff;
-  --card-foreground: #0c1b13;
-  --muted: #eef3ef;
-  --muted-foreground: #52665a;
-  --border: #dce5de;
+  --card-foreground: #09090b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --border: #e4e4e7;
   --primary: #065f46;
   --primary-foreground: #ffffff;
-  --secondary: #e6f4ee;
-  --secondary-foreground: #064e3b;
+  --secondary: #ecfdf5;
+  --secondary-foreground: #065f46;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --ring: #059669;
+  --ring: #065f46;
   --radius: 0.75rem;
 }
 
@@ -34,8 +34,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-ring: var(--ring);
-  --font-sans: var(--font-sans-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -53,7 +53,7 @@ body {
 
 h1,
 h2,
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: -0.02em;
+h3 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
 }
