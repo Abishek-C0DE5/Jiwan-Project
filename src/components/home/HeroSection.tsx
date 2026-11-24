@@ -6,11 +6,9 @@ import { useRouter } from "next/navigation";
 import {
   BookOpen,
   FileText,
-  Play,
   PlaySquare,
   Search,
   ShieldCheck,
-  Sparkles,
   Wallet,
 } from "lucide-react";
 
@@ -45,11 +43,6 @@ export function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
           {/* Left Column */}
           <div className="lg:col-span-6 space-y-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e3f3ea] px-3.5 py-1.5 text-xs font-semibold text-[#135d3b]">
-              <Sparkles className="h-3.5 w-3.5" />
-              The Student Platform
-            </span>
-
             <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[#14221b] sm:text-5xl xl:text-[3.5rem] leading-[1.08]">
               Study Smarter,{" "}
               <span className="relative inline-block text-[#147a4b]">
@@ -241,51 +234,6 @@ export function HeroSection() {
                 <rect x="224" y="242" width="112" height="4" rx="2" fill="#475569" />
                 <rect x="224" y="242" width="46" height="4" rx="2" fill="#22c55e" />
               </svg>
-
-              {/* Floating Card 1: Buy & Sell Books */}
-              <Link
-                href="/marketplace"
-                className="absolute left-2 top-4 sm:left-4 sm:top-6 flex flex-col items-center gap-1.5 rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-md transition-transform duration-300 hover:-translate-y-1 -rotate-3"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
-                  <BookOpen className="h-4 w-4" />
-                </span>
-                <span className="text-[11px] font-bold text-[#14221b] text-center leading-tight">
-                  Buy &amp; Sell
-                  <br />
-                  Books
-                </span>
-              </Link>
-
-              {/* Floating Card 2: Share Notes */}
-              <Link
-                href="/notes"
-                className="absolute right-2 top-2 sm:right-6 sm:top-4 flex flex-col items-center gap-1.5 rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-md transition-transform duration-300 hover:-translate-y-1 rotate-3"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
-                  <FileText className="h-4 w-4" />
-                </span>
-                <span className="text-[11px] font-bold text-[#14221b] text-center leading-tight">
-                  Share
-                  <br />
-                  Notes
-                </span>
-              </Link>
-
-              {/* Floating Card 3: Learn Easily */}
-              <Link
-                href="/learn"
-                className="absolute right-1 bottom-12 sm:right-2 sm:bottom-14 flex flex-col items-center gap-1.5 rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-md transition-transform duration-300 hover:-translate-y-1 -rotate-2"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#147a4b] text-white">
-                  <Play className="h-4 w-4 fill-current" />
-                </span>
-                <span className="text-[11px] font-bold text-[#14221b] text-center leading-tight">
-                  Learn
-                  <br />
-                  Easily
-                </span>
-              </Link>
             </div>
           </div>
         </div>
