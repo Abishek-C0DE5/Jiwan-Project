@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-background text-foreground selection:bg-emerald-100 selection:text-emerald-950">
         <Navbar />
-        <div className="flex min-h-screen flex-col lg:pl-64">
+        <div className="flex min-h-screen flex-col lg:pl-[var(--sidebar-width,256px)] transition-[padding] duration-300 ease-in-out">
           <main className="flex-1 w-full">{children}</main>
           <Footer />
         </div>
