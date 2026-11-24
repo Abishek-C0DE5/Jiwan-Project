@@ -2,14 +2,15 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { FileText, FileUp, PenSquare, Search } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { EDUCATION_LEVELS, formatDate, formatFileSize } from "@/lib/utils/format";
+import { EDUCATION_LEVELS } from "@/lib/utils/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NotesGrid } from "@/components/notes/NotesGrid";
 import type { StudyNote } from "@/types/database";
+
+const INITIAL_PAGE_SIZE = 12;
 
 interface NotesSearchParams {
   q?: string;
@@ -56,7 +57,10 @@ async function NotesContent({
     query = query.eq("note_type", params.type);
   }
 
-  const { data: notes, error } = await query.limit(48);
+  const { data: notes, error } = await query.range(0, INITIAL_PAGE_SIZE);
+  const rows = (notes as StudyNote[]) || [];
+  const hasMore = rows.length > INITIAL_PAGE_SIZE;
+  const initialNotes = rows.slice(0, INITIAL_PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -98,7 +102,7 @@ async function NotesContent({
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
           Failed to load study notes: {error.message}
         </div>
-      ) : !notes || notes.length === 0 ? (
+      ) : initialNotes.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center space-y-3">
           <FileText className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
           <p className="font-medium text-foreground">No study notes found</p>
@@ -107,53 +111,12 @@ async function NotesContent({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {(notes as StudyNote[]).map((note) => (
-            <Link key={note.id} href={`/notes/${note.id}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-5 flex h-full flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <Badge
-                        variant={
-                          note.note_type === "pdf" ? "warning" : "default"
-                        }
-                      >
-                        {note.note_type === "pdf" ? "PDF Document" : "Written Note"}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDate(note.created_at)}
-                      </span>
-                    </div>
-                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary">
-                      {note.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {note.subject} &middot; {note.education_level}
-                      {note.topic ? ` · ${note.topic}` : ""}
-                    </p>
-                    {note.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {note.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-border/60 text-xs text-muted-foreground">
-                    <span>
-                      {note.note_type === "pdf"
-                        ? formatFileSize(note.file_size)
-                        : "Formatted note"}
-                    </span>
-                    <span className="font-medium text-primary group-hover:underline">
-                      Open &rarr;
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+        <NotesGrid
+          key={JSON.stringify(params)}
+          initialNotes={initialNotes}
+          initialHasMore={hasMore}
+          filters={params}
+        />
       )}
     </div>
   );
@@ -165,25 +128,25 @@ export default function NotesPage({
   searchParams: Promise<NotesSearchParams>;
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+    <div className="w-full px-4 py-8 sm:px-6 lg:px-10 xl:px-12 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Study Notes
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-1">
             Read student-written summaries or download shared PDF study guides.
           </p>
         </div>
         <div className="flex flex-wrap gap-2.5">
           <Link href="/notes/new">
-            <Button>
+            <Button size="lg">
               <PenSquare className="h-4 w-4" />
               Create Note
             </Button>
           </Link>
           <Link href="/notes/upload">
-            <Button variant="outline">
+            <Button variant="outline" size="lg">
               <FileUp className="h-4 w-4" />
               Upload PDF
             </Button>
@@ -195,9 +158,17 @@ export default function NotesPage({
         fallback={
           <div className="space-y-6">
             <Skeleton className="h-20 w-full" />
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Skeleton key={i} className="h-48 w-full" />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-border bg-card p-5 space-y-3"
+                >
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-3 w-2/3" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
               ))}
             </div>
           </div>

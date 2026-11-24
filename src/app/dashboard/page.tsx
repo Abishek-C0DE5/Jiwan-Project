@@ -7,12 +7,7 @@ import {
 } from "@/lib/supabase/server";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardClient } from "@/components/dashboard/DashboardClient";
-import type {
-  BookListing,
-  Inquiry,
-  SavedBook,
-  StudyNote,
-} from "@/types/database";
+import type { BookListing } from "@/types/database";
 
 async function DashboardContent() {
   if (!isSupabaseConfigured()) {
@@ -31,60 +26,50 @@ async function DashboardContent() {
 
   const supabase = await createClient();
 
+  // Only load initial tab data (myBooks) + lightweight counts; other tabs lazy-load on click
   const [
     { data: myBooks },
-    { data: myNotes },
-    { data: savedBooks },
-    { data: receivedInquiries },
-    { data: sentInquiries },
+    { count: publishedNotesCount },
   ] = await Promise.all([
     supabase
       .from("book_listings")
       .select("*")
       .eq("seller_id", user.id)
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(24),
     supabase
       .from("notes")
-      .select("*")
+      .select("*", { count: "exact", head: true })
       .eq("author_id", user.id)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("saved_books")
-      .select("*, book:book_listings(*)")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("inquiries")
-      .select(
-        "*, book:book_listings(id, title, price_npr, status, images), sender:public_profiles!inquiries_sender_id_fkey(*)"
-      )
-      .eq("receiver_id", user.id)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("inquiries")
-      .select(
-        "*, book:book_listings(id, title, price_npr, status, images), receiver:public_profiles!inquiries_receiver_id_fkey(*)"
-      )
-      .eq("sender_id", user.id)
-      .order("created_at", { ascending: false }),
+      .eq("status", "active")
+      .eq("visibility", "public"),
   ]);
 
   return (
     <DashboardClient
       profile={profile}
-      myBooks={(myBooks as BookListing[]) || []}
-      myNotes={(myNotes as StudyNote[]) || []}
-      savedBooks={(savedBooks as SavedBook[]) || []}
-      receivedInquiries={(receivedInquiries as Inquiry[]) || []}
-      sentInquiries={(sentInquiries as Inquiry[]) || []}
+      initialBooks={(myBooks as BookListing[]) || []}
+      publishedNotesCount={publishedNotesCount ?? 0}
     />
   );
 }
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <Suspense fallback={<Skeleton className="h-[560px] w-full" />}>
+    <div className="w-full px-4 py-8 sm:px-6 lg:px-10 xl:px-12">
+      <Suspense
+        fallback={
+          <div className="space-y-6">
+            <Skeleton className="h-12 w-64" />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-72 w-full" />
+          </div>
+        }
+      >
         <DashboardContent />
       </Suspense>
     </div>

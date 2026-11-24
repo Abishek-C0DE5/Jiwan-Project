@@ -40,7 +40,7 @@ export function Avatar({ src, name, size = "md", className }: AvatarProps) {
     <div
       aria-label={name}
       className={cn(
-        "rounded-full bg-secondary text-secondary-foreground font-semibold flex items-center justify-center border border-indigo-200 shrink-0",
+        "rounded-full bg-secondary text-secondary-foreground font-semibold flex items-center justify-center border border-emerald-200 shrink-0",
         sizes[size],
         className
       )}

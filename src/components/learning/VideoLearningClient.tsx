@@ -157,9 +157,15 @@ export function VideoLearningClient() {
 
       {/* Loading State */}
       {loading && (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-64 w-full" />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+              <Skeleton className="aspect-video w-full rounded-none" />
+              <div className="p-4 space-y-2">
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -190,11 +196,11 @@ export function VideoLearningClient() {
 
       {/* Results Grid */}
       {!loading && results.length > 0 && (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {results.map((video) => (
             <Card
               key={video.id}
-              className="group overflow-hidden cursor-pointer transition-shadow hover:shadow-md flex flex-col"
+              className="group overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex flex-col"
               onClick={() => setActiveVideo(video)}
             >
               <div className="relative aspect-video bg-muted overflow-hidden">

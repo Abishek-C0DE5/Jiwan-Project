@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f7f9f7;
+  --foreground: #0c1b13;
   --card: #ffffff;
-  --card-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --primary: #4f46e5;
+  --card-foreground: #0c1b13;
+  --muted: #eef3ef;
+  --muted-foreground: #52665a;
+  --border: #dce5de;
+  --primary: #065f46;
   --primary-foreground: #ffffff;
-  --secondary: #eef2ff;
-  --secondary-foreground: #3730a3;
+  --secondary: #e6f4ee;
+  --secondary-foreground: #064e3b;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --ring: #4f46e5;
-  --radius: 0.625rem;
+  --ring: #059669;
+  --radius: 0.75rem;
 }
 
 @theme inline {
@@ -33,12 +33,26 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-fraunces), Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }

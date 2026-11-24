@@ -2,9 +2,9 @@ import { VideoLearningClient } from "@/components/learning/VideoLearningClient";
 
 export default function LearnPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+    <div className="w-full px-4 py-8 sm:px-6 lg:px-10 xl:px-12 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
           Learn with Video Lessons
         </h1>
         <p className="text-sm text-muted-foreground">
