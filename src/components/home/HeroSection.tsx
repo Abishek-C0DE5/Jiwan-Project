@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import {
   BookOpen,
   FileText,
-  Heart,
   Play,
   PlaySquare,
   Search,
+  ShieldCheck,
   Sparkles,
-  Users,
+  Wallet,
 } from "lucide-react";
 
 export function HeroSection() {
@@ -100,19 +100,19 @@ export function HeroSection() {
             </form>
 
             {/* 3 Quick Feature Links */}
-            <div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-3 max-w-xl">
+            <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-3 max-w-xl">
               <Link
                 href="/marketplace"
-                className="group flex items-start gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-emerald-50/70"
+                className="group flex items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-emerald-50/80"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
                   <BookOpen className="h-4 w-4" />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b]">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b] truncate">
                     Book Marketplace
                   </p>
-                  <p className="text-[11px] text-[#5e7266]">
+                  <p className="text-[11px] text-[#5e7266] truncate">
                     Buy &amp; sell books
                   </p>
                 </div>
@@ -120,34 +120,34 @@ export function HeroSection() {
 
               <Link
                 href="/notes"
-                className="group flex items-start gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-emerald-50/70"
+                className="group flex items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-emerald-50/80"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
                   <FileText className="h-4 w-4" />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b]">
-                    Study Notes Hub
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b] truncate">
+                    Study Notes
                   </p>
-                  <p className="text-[11px] text-[#5e7266]">
-                    Share &amp; access notes
+                  <p className="text-[11px] text-[#5e7266] truncate">
+                    Create &amp; share PDFs
                   </p>
                 </div>
               </Link>
 
               <Link
                 href="/learn"
-                className="group flex items-start gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-emerald-50/70"
+                className="group flex items-center gap-2.5 rounded-xl p-2 transition-colors hover:bg-emerald-50/80"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
                   <PlaySquare className="h-4 w-4" />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b]">
-                    Learn
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-[#14221b] group-hover:text-[#147a4b] truncate">
+                    Video Lessons
                   </p>
-                  <p className="text-[11px] text-[#5e7266]">
-                    Watch educational videos
+                  <p className="text-[11px] text-[#5e7266] truncate">
+                    Focused learning
                   </p>
                 </div>
               </Link>
@@ -290,47 +290,45 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Bottom Summary Strip matching reference */}
-        <div className="grid grid-cols-2 gap-4 rounded-2xl border border-emerald-100 bg-white px-6 py-4 shadow-xs sm:grid-cols-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
-              <Users className="h-4 w-4" />
+        {/* Clean, Honest Value Strip */}
+        <div className="grid grid-cols-1 gap-4 rounded-2xl border border-emerald-100 bg-white px-6 py-5 shadow-xs sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#065f46] text-white">
+              <Wallet className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-extrabold text-[#14221b]">10K+</p>
-              <p className="text-xs text-[#5e7266]">Students</p>
+              <p className="text-sm font-bold text-[#14221b]">Zero Listing Fees</p>
+              <p className="text-xs text-[#5e7266]">Trade books directly in NPR</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
-              <BookOpen className="h-4 w-4" />
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#147a4b] text-white">
+              <FileText className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-extrabold text-[#14221b]">50K+</p>
-              <p className="text-xs text-[#5e7266]">Books &amp; Notes</p>
+              <p className="text-sm font-bold text-[#14221b]">Notes &amp; PDFs</p>
+              <p className="text-xs text-[#5e7266]">Write or upload study guides</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0f291e] text-white">
               <PlaySquare className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-extrabold text-[#14221b]">100K+</p>
-              <p className="text-xs text-[#5e7266]">Learning Resources</p>
+              <p className="text-sm font-bold text-[#14221b]">Focused Video Hub</p>
+              <p className="text-xs text-[#5e7266]">Distraction-free YouTube lessons</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e6f4ec] text-[#147a4b]">
-              <Heart className="h-4 w-4" />
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#065f46] text-white">
+              <ShieldCheck className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-xs font-bold text-[#14221b]">
-                Built for Students,
-              </p>
-              <p className="text-xs text-[#5e7266]">By Students</p>
+              <p className="text-sm font-bold text-[#14221b]">Privacy First</p>
+              <p className="text-xs text-[#5e7266]">Student emails stay private</p>
             </div>
           </div>
         </div>
