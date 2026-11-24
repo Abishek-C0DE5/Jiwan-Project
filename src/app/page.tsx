@@ -3,9 +3,12 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
+  CheckCircle2,
   FileText,
+  Play,
   PlaySquare,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { formatNPR } from "@/lib/utils/format";
@@ -100,48 +103,155 @@ async function RecentBooksPreview() {
 export default function HomePage() {
   return (
     <div className="space-y-14 pb-16 w-full">
-      {/* Full-Width Hero */}
-      <section className="border-b border-border bg-gradient-to-br from-[#042f24] via-[#064e3b] to-[#065f46] text-white">
-        <div className="w-full px-4 py-14 sm:px-6 sm:py-20 lg:px-10 xl:px-12">
-          <div className="max-w-3xl space-y-5">
-            <span className="inline-flex items-center rounded-full border border-emerald-400/30 bg-emerald-900/50 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-100">
-              FOR STUDENTS, BY STUDENTS
-            </span>
-            <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-6xl leading-[1.08]">
-              Buy &amp; sell textbooks, share notes, and learn smarter.
-            </h1>
-            <p className="text-base text-emerald-100/85 sm:text-lg max-w-2xl leading-relaxed">
-              One refined, distraction-free platform for students to trade
-              affordable second-hand books, write or upload study notes, and
-              master subjects with curated video lessons.
-            </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link href="/marketplace">
-                <Button
-                  size="lg"
-                  className="bg-white text-emerald-950 hover:bg-emerald-50 font-semibold shadow-sm"
-                >
-                  Browse Books
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+      {/* Creative Editorial Luxury-Emerald Hero */}
+      <section className="relative overflow-hidden border-b border-emerald-950/20 bg-[#032219] text-white">
+        {/* Atmospheric background layers */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(217,119,6,0.12),transparent_45%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
+
+        <div className="relative w-full px-4 py-12 sm:px-6 sm:py-16 lg:px-10 xl:px-12">
+          <div className="grid grid-cols-1 items-center gap-10 xl:grid-cols-12">
+            {/* Left Editorial Column */}
+            <div className="xl:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-900/50 px-3.5 py-1.5 text-xs font-semibold tracking-wider text-emerald-100 uppercase">
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                The Student Commons
+              </div>
+
+              <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl xl:text-6xl leading-[1.05]">
+                Where every textbook finds its{" "}
+                <span className="text-emerald-300 italic font-bold">
+                  next scholar.
+                </span>
+              </h1>
+
+              <p className="text-base text-emerald-100/80 sm:text-lg max-w-2xl leading-relaxed">
+                Trade second-hand textbooks in NPR without middlemen, publish
+                structured study notes or PDFs, and master tough chapters with
+                focused video lessons—all inside one calm workspace.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Link href="/marketplace">
+                  <Button
+                    size="lg"
+                    className="bg-emerald-400 text-emerald-950 hover:bg-emerald-300 font-bold shadow-md"
+                  >
+                    Explore Marketplace
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/notes">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-emerald-300/30 bg-white/5 text-white hover:bg-white/15"
+                  >
+                    Open Study Notes
+                  </Button>
+                </Link>
+                <Link href="/learn">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="text-emerald-100 hover:bg-white/10 hover:text-white"
+                  >
+                    <PlaySquare className="h-4 w-4" />
+                    Video Lessons
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap gap-x-6 gap-y-2 pt-3 text-xs text-emerald-200/80">
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  Zero listing fees
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  Private student inquiries
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  Verified PDF &amp; video hub
+                </span>
+              </div>
+            </div>
+
+            {/* Right Interactive Bento Showcase */}
+            <div className="xl:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Showcase Card 1: Marketplace */}
+              <Link
+                href="/marketplace"
+                className="group rounded-2xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.11] sm:col-span-2"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1.5">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-200">
+                      <BookOpen className="h-3 w-3" /> Marketplace
+                    </span>
+                    <h3 className="text-lg font-bold text-white group-hover:text-emerald-200 transition-colors">
+                      Second-Hand Textbooks in NPR
+                    </h3>
+                    <p className="text-xs text-emerald-100/75 leading-relaxed">
+                      Filter by subject, condition, and city. Save favourites and
+                      message sellers directly.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-emerald-300/25 bg-emerald-950/70 px-3 py-2 text-right shrink-0">
+                    <p className="text-[10px] uppercase tracking-wider text-emerald-300/80">
+                      Save up to
+                    </p>
+                    <p className="text-lg font-extrabold text-emerald-300">
+                      60%
+                    </p>
+                  </div>
+                </div>
               </Link>
-              <Link href="/notes">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-emerald-300/40 bg-emerald-900/40 text-white hover:bg-emerald-800/60"
-                >
-                  Explore Study Notes
-                </Button>
+
+              {/* Showcase Card 2: Study Notes */}
+              <Link
+                href="/notes"
+                className="group rounded-2xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.11]"
+              >
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/20 px-2.5 py-0.5 text-[11px] font-semibold text-amber-200">
+                  <FileText className="h-3 w-3" /> Study Notes
+                </span>
+                <h3 className="mt-3 text-base font-bold text-white group-hover:text-emerald-200 transition-colors">
+                  Write &amp; Upload PDFs
+                </h3>
+                <p className="mt-1 text-xs text-emerald-100/75 leading-relaxed">
+                  Clean markdown editor + private-bucket PDF sharing with instant
+                  preview.
+                </p>
               </Link>
-              <Link href="/learn">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-emerald-100 hover:bg-emerald-800/40 hover:text-white"
-                >
-                  Watch Video Lessons
-                </Button>
+
+              {/* Showcase Card 3: Video Learning */}
+              <Link
+                href="/learn"
+                className="group rounded-2xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.11]"
+              >
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-300/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-100">
+                  <Play className="h-3 w-3 fill-current" /> Learn
+                </span>
+                <h3 className="mt-3 text-base font-bold text-white group-hover:text-emerald-200 transition-colors">
+                  Distraction-Free Videos
+                </h3>
+                <p className="mt-1 text-xs text-emerald-100/75 leading-relaxed">
+                  Search educational lessons and watch inside a clean embedded
+                  player.
+                </p>
               </Link>
             </div>
           </div>
@@ -232,7 +342,10 @@ export default function HomePage() {
           fallback={
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+                <div
+                  key={i}
+                  className="rounded-xl border border-border bg-card overflow-hidden"
+                >
                   <Skeleton className="aspect-[4/3] w-full rounded-none" />
                   <div className="p-4 space-y-2">
                     <Skeleton className="h-4 w-3/4" />

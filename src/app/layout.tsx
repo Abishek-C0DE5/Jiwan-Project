@@ -33,10 +33,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${plusJakarta.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-emerald-100 selection:text-emerald-950">
+      <body className="min-h-full bg-background text-foreground selection:bg-emerald-100 selection:text-emerald-950">
         <Navbar />
-        <main className="flex-1 w-full">{children}</main>
-        <Footer />
+        <div className="flex min-h-screen flex-col lg:pl-64">
+          <main className="flex-1 w-full">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

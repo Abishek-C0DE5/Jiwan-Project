@@ -11,7 +11,7 @@ export function Navbar() {
   return (
     <Suspense
       fallback={
-        <header className="sticky top-0 z-40 h-16 border-b border-border bg-card/95" />
+        <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex lg:w-64 lg:flex-col border-r border-border bg-card" />
       }
     >
       <NavbarWithAuth />
