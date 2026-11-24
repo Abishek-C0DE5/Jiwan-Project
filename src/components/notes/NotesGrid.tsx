@@ -100,19 +100,14 @@ export function NotesGrid({
                       </span>
                     </div>
 
-                    {/* Solid Filled Subject & Level Tags (White Text) */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-md bg-[#147a4b] px-2.5 py-1 text-xs font-semibold text-white">
-                        {note.subject}
-                      </span>
-                      <span className="rounded-md bg-[#0f291e] px-2.5 py-1 text-xs font-medium text-white">
-                        {note.education_level}
-                      </span>
-                    </div>
+                    {/* Subject & Level line (clean, no tag clutter) */}
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#147a4b]">
+                      {note.subject} &middot; {note.education_level}
+                    </p>
 
-                    {/* Title & Description */}
+                    {/* Bold Title & Description */}
                     <div className="space-y-1.5">
-                      <h3 className="text-lg font-bold text-[#14221b] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
+                      <h3 className="text-lg font-extrabold text-[#0c1b13] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
                         {note.title}
                       </h3>
                       {note.description && (

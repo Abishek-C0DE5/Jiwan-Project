@@ -51,19 +51,19 @@ export function BookCard({ book }: BookCardProps) {
 
         {/* Clean, Easy-to-Scan Book Info */}
         <CardContent className="flex flex-1 flex-col justify-between p-5 space-y-4">
-          <div className="space-y-2.5">
-            {/* Solid Filled Category Tag */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-[#147a4b] px-2.5 py-1 text-xs font-semibold text-white">
+          <div className="space-y-2">
+            {/* Single Clean Category Pill + Education Level Text */}
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-[#147a4b] px-2.5 py-0.5 text-xs font-semibold text-white">
                 {book.category?.name || book.subject}
               </span>
-              <span className="rounded-md bg-[#0f291e] px-2.5 py-1 text-xs font-medium text-white">
+              <span className="text-xs font-medium text-[#52665a] truncate">
                 {book.education_level}
               </span>
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-[#14221b] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
+              <h3 className="text-base font-extrabold text-[#0c1b13] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
                 {book.title}
               </h3>
               <p className="text-sm text-[#52665a] line-clamp-1 mt-1">
