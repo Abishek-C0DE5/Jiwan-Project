@@ -65,7 +65,7 @@ export function HeroSection() {
 
             <p className="text-base text-[#4b5e53] sm:text-lg max-w-xl leading-relaxed">
               Buy &amp; sell second-hand books, share study notes and explore
-              educational videos &mdash; all in one place.
+              educational videos, all in one place.
             </p>
 
             {/* Pill Search Bar */}

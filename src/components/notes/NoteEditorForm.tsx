@@ -134,7 +134,7 @@ export function NoteEditorForm({ userId, initialData }: NoteEditorFormProps) {
           <Input
             id="noteTitle"
             required
-            placeholder="e.g., Newton's Laws of Motion — Quick Summary"
+            placeholder="e.g., Newton's Laws of Motion (Quick Summary)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />

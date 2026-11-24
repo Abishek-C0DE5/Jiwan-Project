@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StudyHub — Student Marketplace & Learning Platform",
+  title: "StudyHub: Student Marketplace & Learning Platform",
   description:
     "Buy and sell second-hand textbooks, create and share study notes, and discover educational videos.",
 };
