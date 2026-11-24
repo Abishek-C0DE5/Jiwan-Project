@@ -58,88 +58,92 @@ export function BookFilters({ categories }: BookFiltersProps) {
   );
 
   return (
-    <div className="space-y-4 rounded-xl border border-border bg-card p-4">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          applyFilters();
-        }}
-        className="flex flex-col gap-3 sm:flex-row"
-      >
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-xs">
+      {/* Row 1: Simple Search + Quick Filters */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            applyFilters();
+          }}
+          className="flex gap-2 lg:col-span-6"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search book title, author, or subject..."
+              className="pl-10 h-11"
+              aria-label="Search books"
+            />
+          </div>
+          <Button type="submit" className="h-11 px-6">
+            Search
+          </Button>
+        </form>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:col-span-6">
+          <Select
+            value={condition}
+            onChange={(e) => {
+              setCondition(e.target.value);
+              applyFilters({ condition: e.target.value });
+            }}
+            className="h-11"
+            aria-label="Filter by condition"
+          >
+            <option value="">Any Condition</option>
+            {BOOK_CONDITIONS.map((cond) => (
+              <option key={cond} value={cond}>
+                {cond}
+              </option>
+            ))}
+          </Select>
+
           <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by book title, author, or subject..."
-            className="pl-9"
-            aria-label="Search books"
+            type="number"
+            min={0}
+            placeholder="Max price (NPR)"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            onBlur={() => applyFilters()}
+            className="h-11"
+            aria-label="Maximum price in NPR"
           />
+
+          <Select
+            value={sort}
+            onChange={(e) => {
+              setSort(e.target.value);
+              applyFilters({ sort: e.target.value });
+            }}
+            className="h-11"
+            aria-label="Sort books"
+          >
+            <option value="newest">Newest First</option>
+            <option value="price_asc">Lowest Price</option>
+          </Select>
         </div>
-        <Button type="submit">Search</Button>
-      </form>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            applyFilters({ category: e.target.value });
-          }}
-          aria-label="Filter by category"
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </Select>
-
-        <Select
-          value={condition}
-          onChange={(e) => {
-            setCondition(e.target.value);
-            applyFilters({ condition: e.target.value });
-          }}
-          aria-label="Filter by condition"
-        >
-          <option value="">Any Condition</option>
-          {BOOK_CONDITIONS.map((cond) => (
-            <option key={cond} value={cond}>
-              {cond}
-            </option>
-          ))}
-        </Select>
-
-        <Input
-          type="number"
-          min={0}
-          placeholder="Max price (NPR)"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          onBlur={() => applyFilters()}
-          aria-label="Maximum price in NPR"
-        />
-
-        <Select
-          value={sort}
-          onChange={(e) => {
-            setSort(e.target.value);
-            applyFilters({ sort: e.target.value });
-          }}
-          aria-label="Sort books"
-        >
-          <option value="newest">Sort: Newest First</option>
-          <option value="price_asc">Sort: Lowest Price</option>
-        </Select>
       </div>
 
-      {/* Popular Category Quick Pills */}
+      {/* Row 2: Solid Filled Category Pills (White Text, No Outlines) */}
       <div className="flex flex-wrap items-center gap-2 pt-1">
-        <span className="text-xs font-medium text-muted-foreground">
-          Categories:
-        </span>
+        <button
+          type="button"
+          onClick={() => {
+            setCategory("");
+            applyFilters({ category: "" });
+          }}
+          className={`rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer ${
+            category === ""
+              ? "bg-[#065f46]"
+              : "bg-[#3d6b56] hover:bg-[#147a4b]"
+          }`}
+        >
+          All Books
+        </button>
+
         {categories.map((cat) => {
           const active = category === cat.id;
           return (
@@ -151,10 +155,10 @@ export function BookFilters({ categories }: BookFiltersProps) {
                 setCategory(next);
                 applyFilters({ category: next });
               }}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer ${
                 active
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+                  ? "bg-[#065f46] ring-2 ring-emerald-400 ring-offset-1"
+                  : "bg-[#1f6f4a] hover:bg-[#147a4b]"
               }`}
             >
               {cat.name}
@@ -166,10 +170,10 @@ export function BookFilters({ categories }: BookFiltersProps) {
           <button
             type="button"
             onClick={clearFilters}
-            className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+            className="ml-auto inline-flex items-center gap-1 rounded-full bg-red-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700 cursor-pointer"
           >
             <X className="h-3.5 w-3.5" />
-            Clear filters
+            Reset
           </button>
         )}
       </div>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookFilters } from "@/components/marketplace/BookFilters";
 import { MarketplaceGrid } from "@/components/marketplace/MarketplaceGrid";
+import { DEMO_BOOKS, DEMO_CATEGORIES } from "@/lib/data/demo";
 import type { BookListing, Category } from "@/types/database";
 
 const INITIAL_PAGE_SIZE = 12;
@@ -23,19 +24,48 @@ async function MarketplaceContent({
 }: {
   searchParamsPromise: Promise<MarketplaceSearchParams>;
 }) {
+  const params = await searchParamsPromise;
+
   if (!isSupabaseConfigured()) {
+    let filtered = [...DEMO_BOOKS];
+    if (params.q) {
+      const q = params.q.trim().toLowerCase();
+      filtered = filtered.filter(
+        (b) =>
+          b.title.toLowerCase().includes(q) ||
+          b.author.toLowerCase().includes(q) ||
+          b.subject.toLowerCase().includes(q)
+      );
+    }
+    if (params.category) {
+      filtered = filtered.filter((b) => b.category_id === params.category);
+    }
+    if (params.condition) {
+      filtered = filtered.filter((b) => b.condition === params.condition);
+    }
+    if (params.maxPrice) {
+      const maxVal = Number(params.maxPrice);
+      if (!Number.isNaN(maxVal) && maxVal >= 0) {
+        filtered = filtered.filter((b) => b.price_npr <= maxVal);
+      }
+    }
+    if (params.sort === "price_asc") {
+      filtered.sort((a, b) => a.price_npr - b.price_npr);
+    }
+
     return (
-      <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
-        <p className="text-sm text-muted-foreground">
-          Configure <code>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env.local</code>{" "}
-          to browse and list books.
-        </p>
+      <div className="space-y-6">
+        <BookFilters categories={DEMO_CATEGORIES} />
+        <MarketplaceGrid
+          key={JSON.stringify(params)}
+          initialBooks={filtered}
+          initialHasMore={false}
+          filters={params}
+        />
       </div>
     );
   }
 
-  const params = await searchParamsPromise;
   const supabase = await createClient();
 
   const { data: categories } = await supabase

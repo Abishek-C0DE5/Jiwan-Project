@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { BookOpen, MapPin } from "lucide-react";
+import { ArrowRight, BookOpen, MapPin } from "lucide-react";
 import { formatNPR } from "@/lib/utils/format";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { BookListing } from "@/types/database";
 
 interface BookCardProps {
@@ -10,16 +9,24 @@ interface BookCardProps {
 }
 
 export function BookCard({ book }: BookCardProps) {
+  const conditionBg =
+    book.condition === "Like New"
+      ? "bg-[#065f46]"
+      : book.condition === "Good"
+      ? "bg-[#147a4b]"
+      : "bg-[#b45309]";
+
   return (
     <Link href={`/books/${book.id}`} className="group block h-full">
-      <Card className="flex h-full flex-col overflow-hidden transition-shadow hover:shadow-md">
-        <div className="relative aspect-[4/3] bg-muted overflow-hidden">
+      <Card className="flex h-full flex-col overflow-hidden border-emerald-100 bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+        {/* Book Image */}
+        <div className="relative aspect-[3/2] bg-muted overflow-hidden">
           {book.images && book.images[0] ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={book.images[0]}
               alt={book.title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -27,45 +34,69 @@ export function BookCard({ book }: BookCardProps) {
             </div>
           )}
 
-          <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-            <Badge className="bg-card/90 text-foreground backdrop-blur">
+          {/* Solid Filled Condition Pill (White text, no outline) */}
+          <div className="absolute top-3 left-3 flex items-center gap-2">
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${conditionBg}`}
+            >
               {book.condition}
-            </Badge>
+            </span>
             {book.status === "sold" && (
-              <Badge variant="destructive">Sold</Badge>
+              <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                Sold
+              </span>
             )}
           </div>
         </div>
 
-        <CardContent className="flex flex-1 flex-col justify-between p-4 space-y-3">
-          <div className="space-y-1">
-            <h3 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary">
-              {book.title}
-            </h3>
-            <p className="text-xs text-muted-foreground line-clamp-1">
-              {book.author} &middot; {book.subject}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {book.education_level}
-            </p>
+        {/* Clean, Easy-to-Scan Book Info */}
+        <CardContent className="flex flex-1 flex-col justify-between p-5 space-y-4">
+          <div className="space-y-2.5">
+            {/* Solid Filled Category Tag */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-[#147a4b] px-2.5 py-1 text-xs font-semibold text-white">
+                {book.category?.name || book.subject}
+              </span>
+              <span className="rounded-md bg-[#0f291e] px-2.5 py-1 text-xs font-medium text-white">
+                {book.education_level}
+              </span>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold text-[#14221b] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
+                {book.title}
+              </h3>
+              <p className="text-sm text-[#52665a] line-clamp-1 mt-1">
+                by {book.author}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-end justify-between pt-2 border-t border-border/60">
-            <div>
-              <p className="text-base font-bold text-primary">
-                {formatNPR(book.price_npr)}
-              </p>
-              {book.original_price_npr &&
-                book.original_price_npr > book.price_npr && (
-                  <p className="text-xs text-muted-foreground line-through">
-                    {formatNPR(book.original_price_npr)}
-                  </p>
-                )}
+          {/* Clear Price & Location Footer */}
+          <div className="space-y-3 pt-3 border-t border-emerald-100">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-extrabold text-[#065f46]">
+                  {formatNPR(book.price_npr)}
+                </span>
+                {book.original_price_npr &&
+                  book.original_price_npr > book.price_npr && (
+                    <span className="text-xs text-muted-foreground line-through">
+                      {formatNPR(book.original_price_npr)}
+                    </span>
+                  )}
+              </div>
+
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#065f46] group-hover:translate-x-0.5 transition-transform">
+                View
+                <ArrowRight className="h-3.5 w-3.5" />
+              </span>
             </div>
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground max-w-[110px] truncate">
-              <MapPin className="h-3 w-3 shrink-0" />
-              {book.location}
-            </span>
+
+            <p className="inline-flex items-center gap-1.5 text-xs text-[#52665a]">
+              <MapPin className="h-3.5 w-3.5 text-[#147a4b] shrink-0" />
+              <span className="truncate">{book.location}</span>
+            </p>
           </div>
         </CardContent>
       </Card>

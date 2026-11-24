@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotesGrid } from "@/components/notes/NotesGrid";
+import { DEMO_NOTES } from "@/lib/data/demo";
 import type { StudyNote } from "@/types/database";
 
 const INITIAL_PAGE_SIZE = 12;
@@ -23,16 +24,70 @@ async function NotesContent({
 }: {
   searchParamsPromise: Promise<NotesSearchParams>;
 }) {
+  const params = await searchParamsPromise;
+
   if (!isSupabaseConfigured()) {
+    let filtered = [...DEMO_NOTES];
+    if (params.q) {
+      const q = params.q.trim().toLowerCase();
+      filtered = filtered.filter(
+        (n) =>
+          n.title.toLowerCase().includes(q) ||
+          n.subject.toLowerCase().includes(q) ||
+          (n.topic || "").toLowerCase().includes(q)
+      );
+    }
+    if (params.level) {
+      filtered = filtered.filter((n) => n.education_level === params.level);
+    }
+    if (params.type === "created" || params.type === "pdf") {
+      filtered = filtered.filter((n) => n.note_type === params.type);
+    }
+
     return (
-      <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
-        Configure Supabase in <code>.env.local</code> to browse and share
-        study notes.
+      <div className="space-y-6">
+        <form
+          action="/notes"
+          method="GET"
+          className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-4"
+        >
+          <div className="relative sm:col-span-2">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              name="q"
+              defaultValue={params.q || ""}
+              placeholder="Search by title, subject, or topic..."
+              className="pl-9"
+            />
+          </div>
+          <Select name="level" defaultValue={params.level || ""}>
+            <option value="">All Levels</option>
+            {EDUCATION_LEVELS.map((lvl) => (
+              <option key={lvl} value={lvl}>
+                {lvl}
+              </option>
+            ))}
+          </Select>
+          <div className="flex gap-2">
+            <Select name="type" defaultValue={params.type || ""}>
+              <option value="">All Formats</option>
+              <option value="created">Written Notes</option>
+              <option value="pdf">PDF Documents</option>
+            </Select>
+            <Button type="submit">Filter</Button>
+          </div>
+        </form>
+
+        <NotesGrid
+          key={JSON.stringify(params)}
+          initialNotes={filtered}
+          initialHasMore={false}
+          filters={params}
+        />
       </div>
     );
   }
 
-  const params = await searchParamsPromise;
   const supabase = await createClient();
 
   let query = supabase
