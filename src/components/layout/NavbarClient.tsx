@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -96,10 +97,12 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
             onClick={() => setMobileOpen(false)}
             className="flex items-center gap-3 min-w-0 shrink-0"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/images/college-logo.jpg"
               alt="Godawari College Logo"
+              width={44}
+              height={44}
+              priority
               className="h-11 w-11 rounded-full object-cover border border-[#12434d]/20 shadow-xs shrink-0"
             />
             <div className="min-w-0">
@@ -273,10 +276,11 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-2.5"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src="/images/college-logo.jpg"
                     alt="Godawari College"
+                    width={36}
+                    height={36}
                     className="h-9 w-9 rounded-full object-cover border border-[#12434d]/20"
                   />
                   <span className="font-serif text-base font-bold text-[#12434d]">

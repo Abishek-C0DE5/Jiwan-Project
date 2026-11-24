@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -86,11 +87,13 @@ export function HeroSection() {
       {/* Full-Bleed Hero Banner with Student Photo & Deep Navy/Teal Gradient */}
       <div className="relative overflow-hidden bg-[#071d2b]">
         {/* Background Student Photo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="/images/student-photo.jpg"
           alt="Godawari College Students"
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-65"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-65"
         />
         <div
           aria-hidden="true"

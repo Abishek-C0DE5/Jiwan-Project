@@ -37,12 +37,6 @@ async function AdminContent() {
         books={DEMO_BOOKS}
         notes={DEMO_NOTES}
         notices={DEMO_NOTICES}
-        stats={{
-          totalUsers: DEMO_ADMIN_USERS.length,
-          activeBooks: DEMO_BOOKS.filter((b) => b.status === "available").length,
-          activeNotes: DEMO_NOTES.filter((n) => n.status === "active").length,
-          pendingReports: DEMO_REPORTS.filter((r) => r.status === "pending").length,
-        }}
       />
     );
   }
@@ -54,9 +48,6 @@ async function AdminContent() {
     { data: users },
     { data: books },
     { data: notes },
-    { count: totalUsers },
-    { count: activeBooks },
-    { count: activeNotes },
   ] = await Promise.all([
     supabase
       .from("reports")
@@ -78,19 +69,9 @@ async function AdminContent() {
       .select("*")
       .order("created_at", { ascending: false })
       .limit(50),
-    supabase.from("profiles").select("*", { count: "exact", head: true }),
-    supabase
-      .from("book_listings")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "available"),
-    supabase
-      .from("notes")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "active"),
   ]);
 
   const reportList = (reports as Report[]) || [];
-  const pendingReports = reportList.filter((r) => r.status === "pending").length;
 
   return (
     <AdminModerationClient
@@ -102,12 +83,6 @@ async function AdminContent() {
       books={(books as BookListing[]) || []}
       notes={(notes as StudyNote[]) || []}
       notices={DEMO_NOTICES}
-      stats={{
-        totalUsers: totalUsers ?? 0,
-        activeBooks: activeBooks ?? 0,
-        activeNotes: activeNotes ?? 0,
-        pendingReports,
-      }}
     />
   );
 }

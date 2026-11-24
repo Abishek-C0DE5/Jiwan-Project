@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -8,10 +9,11 @@ export function Footer() {
           {/* Brand Column */}
           <div className="space-y-3 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/images/college-logo.jpg"
                 alt="Godawari College Logo"
+                width={40}
+                height={40}
                 className="h-10 w-10 rounded-full object-cover border border-white/20"
               />
               <div>

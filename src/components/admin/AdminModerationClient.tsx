@@ -36,12 +36,6 @@ interface AdminModerationClientProps {
   books: BookListing[];
   notes: StudyNote[];
   notices: CollegeNotice[];
-  stats: {
-    totalUsers: number;
-    activeBooks: number;
-    activeNotes: number;
-    pendingReports: number;
-  };
 }
 
 type AdminTab = "reports" | "books" | "notes" | "users" | "notices";
