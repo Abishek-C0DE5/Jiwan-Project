@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Calendar, FileText, Loader2, PenSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatFileSize } from "@/lib/utils/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { StudyNote } from "@/types/database";
 
@@ -72,60 +71,85 @@ export function NotesGrid({
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {notes.map((note) => (
-          <Link key={note.id} href={`/notes/${note.id}`} className="group">
-            <Card className="h-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-              <CardContent className="p-5 flex h-full flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <Badge
-                      variant={note.note_type === "pdf" ? "warning" : "default"}
-                    >
-                      {note.note_type === "pdf" ? "PDF Document" : "Written Note"}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDate(note.created_at)}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {notes.map((note) => {
+          const isPdf = note.note_type === "pdf";
+          return (
+            <Link key={note.id} href={`/notes/${note.id}`} className="group">
+              <Card className="h-full border-emerald-100 bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+                <CardContent className="p-6 flex h-full flex-col justify-between space-y-5">
+                  <div className="space-y-3.5">
+                    {/* Top row: Solid Filled Format Pill + Date */}
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white ${
+                          isPdf ? "bg-[#b45309]" : "bg-[#065f46]"
+                        }`}
+                      >
+                        {isPdf ? (
+                          <FileText className="h-3.5 w-3.5" />
+                        ) : (
+                          <PenSquare className="h-3.5 w-3.5" />
+                        )}
+                        {isPdf ? "PDF Document" : "Written Note"}
+                      </span>
+
+                      <span className="inline-flex items-center gap-1 text-xs text-[#52665a]">
+                        <Calendar className="h-3.5 w-3.5" />
+                        {formatDate(note.created_at)}
+                      </span>
+                    </div>
+
+                    {/* Solid Filled Subject & Level Tags (White Text) */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-md bg-[#147a4b] px-2.5 py-1 text-xs font-semibold text-white">
+                        {note.subject}
+                      </span>
+                      <span className="rounded-md bg-[#0f291e] px-2.5 py-1 text-xs font-medium text-white">
+                        {note.education_level}
+                      </span>
+                    </div>
+
+                    {/* Title & Description */}
+                    <div className="space-y-1.5">
+                      <h3 className="text-lg font-bold text-[#14221b] line-clamp-2 leading-snug group-hover:text-[#065f46] transition-colors">
+                        {note.title}
+                      </h3>
+                      {note.description && (
+                        <p className="text-sm text-[#52665a] line-clamp-2 leading-relaxed">
+                          {note.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Clean Footer */}
+                  <div className="flex items-center justify-between pt-4 border-t border-emerald-100">
+                    <span className="text-xs font-medium text-[#52665a]">
+                      {isPdf
+                        ? `PDF · ${formatFileSize(note.file_size)}`
+                        : note.topic || "Study Summary"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-[#065f46] group-hover:translate-x-0.5 transition-transform">
+                      {isPdf ? "View PDF" : "Read Note"}
+                      <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
-                  <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {note.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    {note.subject} &middot; {note.education_level}
-                    {note.topic ? ` · ${note.topic}` : ""}
-                  </p>
-                  {note.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {note.description}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-border/60 text-xs text-muted-foreground">
-                  <span>
-                    {note.note_type === "pdf"
-                      ? formatFileSize(note.file_size)
-                      : "Formatted note"}
-                  </span>
-                  <span className="font-semibold text-primary group-hover:underline">
-                    Open &rarr;
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
 
         {loadingMore &&
-          [1, 2, 3, 4].map((i) => (
+          [1, 2, 3].map((i) => (
             <div
               key={`sk-${i}`}
-              className="rounded-xl border border-border bg-card p-5 space-y-3"
+              className="rounded-xl border border-border bg-card p-6 space-y-3"
             >
-              <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-5 w-4/5" />
-              <Skeleton className="h-3 w-2/3" />
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-6 w-4/5" />
               <Skeleton className="h-10 w-full" />
             </div>
           ))}

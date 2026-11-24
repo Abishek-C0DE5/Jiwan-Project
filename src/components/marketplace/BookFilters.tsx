@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Check, Search, X } from "lucide-react";
 import { BOOK_CONDITIONS } from "@/lib/utils/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -127,7 +127,7 @@ export function BookFilters({ categories }: BookFiltersProps) {
         </div>
       </div>
 
-      {/* Row 2: Solid Filled Category Pills (White Text, No Outlines) */}
+      {/* Row 2: Distinct Active vs Inactive Category Pills */}
       <div className="flex flex-wrap items-center gap-2 pt-1">
         <button
           type="button"
@@ -135,12 +135,13 @@ export function BookFilters({ categories }: BookFiltersProps) {
             setCategory("");
             applyFilters({ category: "" });
           }}
-          className={`rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
             category === ""
-              ? "bg-[#065f46]"
-              : "bg-[#3d6b56] hover:bg-[#147a4b]"
+              ? "bg-[#065f46] text-white shadow-sm"
+              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
           }`}
         >
+          {category === "" && <Check className="h-3.5 w-3.5" />}
           All Books
         </button>
 
@@ -155,12 +156,13 @@ export function BookFilters({ categories }: BookFiltersProps) {
                 setCategory(next);
                 applyFilters({ category: next });
               }}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold text-white transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                 active
-                  ? "bg-[#065f46] ring-2 ring-emerald-400 ring-offset-1"
-                  : "bg-[#1f6f4a] hover:bg-[#147a4b]"
+                  ? "bg-[#065f46] text-white shadow-sm"
+                  : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
               }`}
             >
+              {active && <Check className="h-3.5 w-3.5" />}
               {cat.name}
             </button>
           );

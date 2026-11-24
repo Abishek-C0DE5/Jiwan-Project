@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { FileText, FileUp, PenSquare, Search } from "lucide-react";
+import { Check, FileText, FileUp, PenSquare, Search } from "lucide-react";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { EDUCATION_LEVELS } from "@/lib/utils/format";
+import { DEMO_NOTES } from "@/lib/data/demo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotesGrid } from "@/components/notes/NotesGrid";
-import { DEMO_NOTES } from "@/lib/data/demo";
 import type { StudyNote } from "@/types/database";
 
 const INITIAL_PAGE_SIZE = 12;
@@ -17,6 +17,96 @@ interface NotesSearchParams {
   q?: string;
   level?: string;
   type?: string;
+}
+
+function NotesFilterBar({ params }: { params: NotesSearchParams }) {
+  const buildTypeHref = (typeVal: string) => {
+    const sp = new URLSearchParams();
+    if (params.q) sp.set("q", params.q);
+    if (params.level) sp.set("level", params.level);
+    if (typeVal) sp.set("type", typeVal);
+    const qs = sp.toString();
+    return qs ? `/notes?${qs}` : "/notes";
+  };
+
+  return (
+    <div className="space-y-4 rounded-2xl border border-emerald-100 bg-white p-5 shadow-xs">
+      <form
+        action="/notes"
+        method="GET"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-12"
+      >
+        {params.type && <input type="hidden" name="type" value={params.type} />}
+        <div className="relative sm:col-span-6">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            name="q"
+            defaultValue={params.q || ""}
+            placeholder="Search notes by title, subject, or topic..."
+            className="pl-10 h-11"
+          />
+        </div>
+
+        <div className="sm:col-span-4">
+          <Select
+            name="level"
+            defaultValue={params.level || ""}
+            className="h-11"
+          >
+            <option value="">All Education Levels</option>
+            {EDUCATION_LEVELS.map((lvl) => (
+              <option key={lvl} value={lvl}>
+                {lvl}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div className="sm:col-span-2">
+          <Button type="submit" className="w-full h-11">
+            Search
+          </Button>
+        </div>
+      </form>
+
+      {/* Distinct Active vs Inactive Format Pills */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Link
+          href={buildTypeHref("")}
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+            !params.type
+              ? "bg-[#065f46] text-white shadow-sm"
+              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+          }`}
+        >
+          {!params.type && <Check className="h-3.5 w-3.5" />}
+          All Formats
+        </Link>
+        <Link
+          href={buildTypeHref("created")}
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+            params.type === "created"
+              ? "bg-[#065f46] text-white shadow-sm"
+              : "bg-[#e6f4ec] text-[#064e3b] hover:bg-[#d1ebdc]"
+          }`}
+        >
+          {params.type === "created" && <Check className="h-3.5 w-3.5" />}
+          Written Notes
+        </Link>
+        <Link
+          href={buildTypeHref("pdf")}
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+            params.type === "pdf"
+              ? "bg-[#b45309] text-white shadow-sm"
+              : "bg-amber-100 text-amber-900 hover:bg-amber-200/80"
+          }`}
+        >
+          {params.type === "pdf" && <Check className="h-3.5 w-3.5" />}
+          PDF Documents
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 async function NotesContent({
@@ -46,44 +136,20 @@ async function NotesContent({
 
     return (
       <div className="space-y-6">
-        <form
-          action="/notes"
-          method="GET"
-          className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-4"
-        >
-          <div className="relative sm:col-span-2">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              name="q"
-              defaultValue={params.q || ""}
-              placeholder="Search by title, subject, or topic..."
-              className="pl-9"
-            />
+        <NotesFilterBar params={params} />
+        {filtered.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center space-y-3">
+            <FileText className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
+            <p className="font-medium text-foreground">No matching notes found</p>
           </div>
-          <Select name="level" defaultValue={params.level || ""}>
-            <option value="">All Levels</option>
-            {EDUCATION_LEVELS.map((lvl) => (
-              <option key={lvl} value={lvl}>
-                {lvl}
-              </option>
-            ))}
-          </Select>
-          <div className="flex gap-2">
-            <Select name="type" defaultValue={params.type || ""}>
-              <option value="">All Formats</option>
-              <option value="created">Written Notes</option>
-              <option value="pdf">PDF Documents</option>
-            </Select>
-            <Button type="submit">Filter</Button>
-          </div>
-        </form>
-
-        <NotesGrid
-          key={JSON.stringify(params)}
-          initialNotes={filtered}
-          initialHasMore={false}
-          filters={params}
-        />
+        ) : (
+          <NotesGrid
+            key={JSON.stringify(params)}
+            initialNotes={filtered}
+            initialHasMore={false}
+            filters={params}
+          />
+        )}
       </div>
     );
   }
@@ -119,39 +185,7 @@ async function NotesContent({
 
   return (
     <div className="space-y-6">
-      <form
-        action="/notes"
-        method="GET"
-        className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-4"
-      >
-        <div className="relative sm:col-span-2">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            name="q"
-            defaultValue={params.q || ""}
-            placeholder="Search by title, subject, or topic..."
-            className="pl-9"
-          />
-        </div>
-
-        <Select name="level" defaultValue={params.level || ""}>
-          <option value="">All Levels</option>
-          {EDUCATION_LEVELS.map((lvl) => (
-            <option key={lvl} value={lvl}>
-              {lvl}
-            </option>
-          ))}
-        </Select>
-
-        <div className="flex gap-2">
-          <Select name="type" defaultValue={params.type || ""}>
-            <option value="">All Formats</option>
-            <option value="created">Written Notes</option>
-            <option value="pdf">PDF Documents</option>
-          </Select>
-          <Button type="submit">Filter</Button>
-        </div>
-      </form>
+      <NotesFilterBar params={params} />
 
       {error ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
@@ -212,16 +246,16 @@ export default function NotesPage({
       <Suspense
         fallback={
           <div className="space-y-6">
-            <Skeleton className="h-20 w-full" />
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <Skeleton className="h-28 w-full" />
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-border bg-card p-5 space-y-3"
+                  className="rounded-xl border border-border bg-card p-6 space-y-3"
                 >
-                  <Skeleton className="h-5 w-24" />
-                  <Skeleton className="h-5 w-4/5" />
-                  <Skeleton className="h-3 w-2/3" />
+                  <Skeleton className="h-6 w-28" />
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-6 w-4/5" />
                   <Skeleton className="h-10 w-full" />
                 </div>
               ))}
