@@ -1,15 +1,51 @@
 import type { BookListing, Category, PublicProfile, StudyNote } from "@/types/database";
 
-function makeBookCover(title: string, accent: string, subject: string): string {
+function makeBookCover(
+  title: string,
+  accent: string,
+  subject: string,
+  author = "Student Edition"
+): string {
   const safeTitle = title.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const safeSubject = subject.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
-    <rect width="480" height="360" fill="${accent}" />
-    <rect x="36" y="32" width="408" height="296" rx="16" fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.25" />
-    <text x="56" y="84" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#d1fae5" letter-spacing="1.5">${safeSubject.toUpperCase()}</text>
-    <text x="56" y="160" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#ffffff">${safeTitle.slice(0, 24)}</text>
-    <text x="56" y="198" font-family="Georgia, serif" font-size="24" font-weight="600" fill="#ecfdf5">${safeTitle.slice(24, 48)}</text>
-    <rect x="56" y="268" width="96" height="6" rx="3" fill="#6ee7b7" />
+  const safeAuthor = author.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const line1 = safeTitle.slice(0, 20);
+  const line2 = safeTitle.slice(20, 40);
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#eef5f0"/>
+        <stop offset="100%" stop-color="#dcebe2"/>
+      </linearGradient>
+      <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+        <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#062e22" flood-opacity="0.22"/>
+      </filter>
+    </defs>
+    <rect width="480" height="320" fill="url(#bg)"/>
+    <g filter="url(#shadow)">
+      <!-- Page edges (bottom & right) -->
+      <rect x="134" y="34" width="218" height="256" rx="8" fill="#f8faf8" stroke="#cbd5e1" stroke-width="1"/>
+      <rect x="130" y="30" width="218" height="256" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Book Cover -->
+      <rect x="126" y="26" width="218" height="256" rx="8" fill="${accent}"/>
+      <!-- Book Spine -->
+      <rect x="126" y="26" width="22" height="256" rx="4" fill="#000000" fill-opacity="0.24"/>
+      <line x1="148" y1="26" x2="148" y2="282" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5"/>
+      <!-- Decorative Cover Art -->
+      <circle cx="304" cy="84" r="38" fill="#ffffff" fill-opacity="0.08"/>
+      <circle cx="304" cy="84" r="22" fill="#ffffff" fill-opacity="0.1"/>
+      <!-- Subject Pill -->
+      <rect x="166" y="52" width="128" height="22" rx="11" fill="#ffffff" fill-opacity="0.18"/>
+      <text x="178" y="67" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#ecfdf5" letter-spacing="1">${safeSubject.toUpperCase().slice(0, 16)}</text>
+      <!-- Title -->
+      <text x="166" y="132" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#ffffff">${line1}</text>
+      <text x="166" y="158" font-family="Georgia, serif" font-size="18" font-weight="700" fill="#d1fae5">${line2}</text>
+      <!-- Accent Rule -->
+      <rect x="166" y="178" width="44" height="4" rx="2" fill="#6ee7b7"/>
+      <!-- Author -->
+      <text x="166" y="248" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#d1fae5">${safeAuthor.slice(0, 26)}</text>
+    </g>
   </svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
