@@ -1,6 +1,11 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { createClient, getCurrentUserWithProfile } from "@/lib/supabase/server";
+import {
+  createClient,
+  getCurrentUserWithProfile,
+  isSupabaseConfigured,
+} from "@/lib/supabase/server";
+import { DEMO_CATEGORIES } from "@/lib/data/demo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookForm } from "@/components/marketplace/BookForm";
@@ -15,11 +20,17 @@ async function SellBookContent() {
     redirect("/dashboard");
   }
 
-  const supabase = await createClient();
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name", { ascending: true });
+  const supabaseConfigured = isSupabaseConfigured();
+  let categories: Category[] = DEMO_CATEGORIES;
+
+  if (supabaseConfigured) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name", { ascending: true });
+    categories = (data as Category[]) || [];
+  }
 
   return (
     <Card>
@@ -32,8 +43,9 @@ async function SellBookContent() {
       </CardHeader>
       <CardContent>
         <BookForm
-          categories={(categories as Category[]) || []}
+          categories={categories}
           userId={user.id}
+          isDemoMode={!supabaseConfigured}
         />
       </CardContent>
     </Card>

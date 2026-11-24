@@ -99,8 +99,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           aria-expanded={open}
           onClick={() => !disabled && setOpen((prev) => !prev)}
           className={cn(
-            "flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9]/30 focus-visible:border-[#6d28d9] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:border-violet-300",
-            open && "border-[#6d28d9] ring-2 ring-[#6d28d9]/20",
+            "flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#12434d]/30 focus-visible:border-[#12434d] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:border-[#12434d]/50",
+            open && "border-[#12434d] ring-2 ring-[#12434d]/20",
             className
           )}
           {...props}
@@ -111,7 +111,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           <ChevronDown
             className={cn(
               "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
-              open && "rotate-180 text-[#6d28d9]"
+              open && "rotate-180 text-[#12434d]"
             )}
           />
         </button>
@@ -134,8 +134,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                   className={cn(
                     "flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors cursor-pointer",
                     active
-                      ? "bg-[#6d28d9] font-semibold text-white"
-                      : "text-foreground hover:bg-[#ede9fe] hover:text-[#5b21b6]",
+                      ? "bg-[#12434d] font-semibold text-white"
+                      : "text-foreground hover:bg-[#12434d]/10 hover:text-[#12434d]",
                     opt.disabled && "opacity-50 cursor-not-allowed"
                   )}
                 >

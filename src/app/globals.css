@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --sidebar-width: 256px;
-  --background: #f8f9fc;
+  /* Godawari College Theme Palette */
+  --theme-primary: #12434d;
+  --theme-primary-light: #13434c;
+  --theme-primary-dark: #083b45;
+  --theme-secondary: #f2a51a;
+  --theme-secondary-light: #f4b63e;
+  --theme-secondary-dark: #e2a024;
+  --theme-dark: #071d2b;
+
+  --background: #fdfbf7;
   --foreground: #111827;
   --card: #ffffff;
   --card-foreground: #111827;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
   --border: #e5e7eb;
-  --primary: #6d28d9;
+  --primary: #12434d;
   --primary-foreground: #ffffff;
-  --secondary: #ede9fe;
-  --secondary-foreground: #5b21b6;
+  --secondary: #fef3c7;
+  --secondary-foreground: #083b45;
+  --accent: #f2a51a;
+  --accent-foreground: #071d2b;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --ring: #6d28d9;
+  --ring: #12434d;
   --radius: 0.75rem;
 }
 
@@ -31,11 +41,14 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-ring: var(--ring);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-lora), Georgia, serif;
+  --font-display: var(--font-lora), Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -53,7 +66,40 @@ body {
 
 h1,
 h2,
-h3 {
-  font-family: var(--font-sans);
-  letter-spacing: -0.025em;
+h3,
+h4,
+.theme-heading {
+  font-family: var(--font-lora), Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.godawari-hero-gradient {
+  background: linear-gradient(135deg, #071d2b 0%, #12434d 58%, #083b45 100%);
+}
+
+.godawari-notice-gradient {
+  background: linear-gradient(90deg, #12434d 0%, #083b45 100%);
+}
+
+.godawari-cta-gradient {
+  background: linear-gradient(135deg, #12434d 0%, #071d2b 100%);
+}
+
+@keyframes godawari-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-notice-marquee {
+  display: flex;
+  width: max-content;
+  animation: godawari-marquee 32s linear infinite;
+}
+
+.animate-notice-marquee:hover {
+  animation-play-state: paused;
 }

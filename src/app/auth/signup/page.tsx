@@ -21,9 +21,7 @@ export default function SignUpPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [institution, setInstitution] = useState("");
   const [educationLevel, setEducationLevel] = useState("");
-  const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -53,9 +51,9 @@ export default function SignUpPage() {
           emailRedirectTo: redirectTo,
           data: {
             full_name: fullName.trim(),
-            institution: institution.trim() || null,
+            institution: "Godawari College",
             education_level: educationLevel || null,
-            location: location.trim() || null,
+            location: "Itahari, Sunsari",
           },
         },
       });
@@ -140,42 +138,20 @@ export default function SignUpPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="educationLevel">Class / Level</Label>
-                  <Select
-                    id="educationLevel"
-                    value={educationLevel}
-                    onChange={(e) => setEducationLevel(e.target.value)}
-                  >
-                    <option value="">Select level (optional)</option>
-                    {EDUCATION_LEVELS.map((lvl) => (
-                      <option key={lvl} value={lvl}>
-                        {lvl}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="location">City / Area</Label>
-                  <Input
-                    id="location"
-                    placeholder="e.g., Kathmandu"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                </div>
-              </div>
-
               <div className="space-y-1.5">
-                <Label htmlFor="institution">School / College (optional)</Label>
-                <Input
-                  id="institution"
-                  placeholder="e.g., Tribhuvan University"
-                  value={institution}
-                  onChange={(e) => setInstitution(e.target.value)}
-                />
+                <Label htmlFor="educationLevel">Class / Level</Label>
+                <Select
+                  id="educationLevel"
+                  value={educationLevel}
+                  onChange={(e) => setEducationLevel(e.target.value)}
+                >
+                  <option value="">Select level (optional)</option>
+                  {EDUCATION_LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {lvl}
+                    </option>
+                  ))}
+                </Select>
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>

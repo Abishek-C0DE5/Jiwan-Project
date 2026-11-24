@@ -5,19 +5,17 @@ import {
   getCurrentUserWithProfile,
   isSupabaseConfigured,
 } from "@/lib/supabase/server";
+import {
+  DEMO_ADMIN_USERS,
+  DEMO_NOTICES,
+  DEMO_REPORTS,
+} from "@/lib/auth/demo";
+import { DEMO_BOOKS, DEMO_NOTES } from "@/lib/data/demo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminModerationClient } from "@/components/admin/AdminModerationClient";
-import type { Profile, Report } from "@/types/database";
+import type { BookListing, Profile, Report, StudyNote } from "@/types/database";
 
 async function AdminContent() {
-  if (!isSupabaseConfigured()) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Supabase is not configured yet.
-      </div>
-    );
-  }
-
   const { user, profile } = await getCurrentUserWithProfile();
   if (!user || !profile) {
     redirect("/auth/login?redirectTo=/admin");
@@ -28,11 +26,34 @@ async function AdminContent() {
     redirect("/dashboard");
   }
 
+  if (!isSupabaseConfigured()) {
+    return (
+      <AdminModerationClient
+        adminId={user.id}
+        adminEmail={profile.email}
+        isDemoMode={true}
+        reports={DEMO_REPORTS}
+        users={DEMO_ADMIN_USERS}
+        books={DEMO_BOOKS}
+        notes={DEMO_NOTES}
+        notices={DEMO_NOTICES}
+        stats={{
+          totalUsers: DEMO_ADMIN_USERS.length,
+          activeBooks: DEMO_BOOKS.filter((b) => b.status === "available").length,
+          activeNotes: DEMO_NOTES.filter((n) => n.status === "active").length,
+          pendingReports: DEMO_REPORTS.filter((r) => r.status === "pending").length,
+        }}
+      />
+    );
+  }
+
   const supabase = await createClient();
 
   const [
     { data: reports },
     { data: users },
+    { data: books },
+    { data: notes },
     { count: totalUsers },
     { count: activeBooks },
     { count: activeNotes },
@@ -44,6 +65,16 @@ async function AdminContent() {
       .limit(50),
     supabase
       .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("book_listings")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("notes")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(50),
@@ -64,8 +95,13 @@ async function AdminContent() {
   return (
     <AdminModerationClient
       adminId={user.id}
+      adminEmail={profile.email}
+      isDemoMode={false}
       reports={reportList}
       users={(users as Profile[]) || []}
+      books={(books as BookListing[]) || []}
+      notes={(notes as StudyNote[]) || []}
+      notices={DEMO_NOTICES}
       stats={{
         totalUsers: totalUsers ?? 0,
         activeBooks: activeBooks ?? 0,
@@ -78,15 +114,20 @@ async function AdminContent() {
 
 export default function AdminPage() {
   return (
-    <div className="w-full px-4 py-8 sm:px-6 lg:px-10 xl:px-12 space-y-6">
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-          Admin Moderation
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Review reported listings and notes, remove unauthorized content, and
-          manage accounts.
-        </p>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#12434d]">
+            Godawari College · Administration
+          </p>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-1">
+            Admin Control Panel
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage students, marketplace textbooks, study notes, college
+            notices, and moderation reports.
+          </p>
+        </div>
       </div>
 
       <Suspense fallback={<Skeleton className="h-[520px] w-full" />}>

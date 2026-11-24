@@ -5,23 +5,25 @@ import {
   getCurrentUserWithProfile,
   isSupabaseConfigured,
 } from "@/lib/supabase/server";
+import { DEMO_BOOKS } from "@/lib/data/demo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardClient } from "@/components/dashboard/DashboardClient";
 import type { BookListing } from "@/types/database";
 
 async function DashboardContent() {
-  if (!isSupabaseConfigured()) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Configure Supabase in <code>.env.local</code> to access your student
-        dashboard.
-      </div>
-    );
-  }
-
   const { user, profile } = await getCurrentUserWithProfile();
   if (!user || !profile) {
     redirect("/auth/login?redirectTo=/dashboard");
+  }
+
+  if (!isSupabaseConfigured()) {
+    return (
+      <DashboardClient
+        profile={profile}
+        initialBooks={DEMO_BOOKS.slice(0, 2)}
+        publishedNotesCount={2}
+      />
+    );
   }
 
   const supabase = await createClient();

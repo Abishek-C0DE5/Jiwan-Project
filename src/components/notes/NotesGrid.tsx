@@ -83,7 +83,7 @@ export function NotesGrid({
                     <div className="flex items-center justify-between gap-2">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white ${
-                          isPdf ? "bg-[#d97706]" : "bg-[#6d28d9]"
+                          isPdf ? "bg-[#e2a024] text-[#071d2b]" : "bg-[#12434d]"
                         }`}
                       >
                         {isPdf ? (
@@ -101,13 +101,13 @@ export function NotesGrid({
                     </div>
 
                     {/* Subject & Level line */}
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6d28d9]">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#12434d]">
                       {note.subject} &middot; {note.education_level}
                     </p>
 
                     {/* Bold Title & Description */}
                     <div className="space-y-1.5">
-                      <h3 className="text-lg font-extrabold text-foreground line-clamp-2 leading-snug group-hover:text-[#6d28d9] transition-colors">
+                      <h3 className="font-sans text-lg font-extrabold text-foreground line-clamp-2 leading-snug group-hover:text-[#12434d] transition-colors">
                         {note.title}
                       </h3>
                       {note.description && (
@@ -125,7 +125,7 @@ export function NotesGrid({
                         ? `PDF · ${formatFileSize(note.file_size)}`
                         : note.topic || "Study Summary"}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-sm font-bold text-[#6d28d9] group-hover:translate-x-0.5 transition-transform">
+                    <span className="inline-flex items-center gap-1 text-sm font-bold text-[#12434d] group-hover:translate-x-0.5 transition-transform">
                       {isPdf ? "View PDF" : "Read Note"}
                       <ArrowRight className="h-4 w-4" />
                     </span>

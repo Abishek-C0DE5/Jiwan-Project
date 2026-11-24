@@ -181,7 +181,7 @@ export function BookDetailActions({
         details: parsed.data.details || null,
       });
       if (!error) {
-        setReportFeedback("Report submitted. Thank you for keeping StudyHub safe.");
+        setReportFeedback("Report submitted. Thank you for keeping our community safe.");
         setReportDetails("");
         setShowReport(false);
       }

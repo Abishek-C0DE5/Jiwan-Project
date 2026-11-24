@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, Inter, Lora } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -10,26 +10,32 @@ const inter = Inter({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const lora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "StudyHub: Student Marketplace & Learning Platform",
+  title: "Godawari College — Student Academic & Marketplace Hub",
   description:
-    "Buy and sell second-hand textbooks, create and share study notes, and discover educational videos.",
+    "Godawari College student portal: buy and sell second-hand textbooks, share study notes, and watch focused educational videos.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${lora.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-background text-foreground selection:bg-emerald-100 selection:text-emerald-950">
-        <Navbar />
-        <div className="flex min-h-screen flex-col lg:pl-[var(--sidebar-width,256px)] transition-[padding] duration-300 ease-in-out">
+      <body className="min-h-full bg-background text-foreground selection:bg-[#fef3c7] selection:text-[#071d2b]">
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
           <main className="flex-1 w-full">{children}</main>
           <Footer />
         </div>

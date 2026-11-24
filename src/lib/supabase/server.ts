@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { DEMO_COOKIE_NAME, getDemoAccountByRole } from "@/lib/auth/demo";
 import type { Profile } from "@/types/database";
 
 export function isSupabaseConfigured(): boolean {
@@ -45,6 +46,15 @@ export async function getCurrentUserWithProfile(): Promise<{
   profile: Profile | null;
 }> {
   if (!isSupabaseConfigured()) {
+    const cookieStore = await cookies();
+    const demoRole = cookieStore.get(DEMO_COOKIE_NAME)?.value;
+    const demoAccount = getDemoAccountByRole(demoRole);
+    if (demoAccount) {
+      return {
+        user: demoAccount.user,
+        profile: demoAccount.profile,
+      };
+    }
     return { user: null, profile: null };
   }
 
