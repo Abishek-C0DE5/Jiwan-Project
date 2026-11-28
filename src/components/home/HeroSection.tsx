@@ -88,8 +88,8 @@ export function HeroSection() {
       <div className="relative overflow-hidden bg-[#071d2b]">
         {/* Background Student Photo */}
         <Image
-          src="/images/student-photo.jpg"
-          alt="Godawari College Students"
+          src="/images/students-photo.png"
+          alt="Sushma Godawari Student Hub Students"
           fill
           priority
           sizes="100vw"
