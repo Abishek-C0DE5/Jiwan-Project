@@ -65,14 +65,8 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
   async function handleLogout() {
     setSigningOut(true);
     try {
-      await fetch("/api/auth/demo-logout", { method: "POST" });
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
-        const supabase = createClient();
-        await supabase.auth.signOut();
-      }
+      const supabase = createClient();
+      await supabase.auth.signOut();
       setMobileOpen(false);
       router.push("/");
       router.refresh();

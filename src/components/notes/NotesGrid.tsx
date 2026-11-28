@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Calendar, FileText, Loader2, PenSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { StudyNote } from "@/types/database";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 9;
 
 interface NotesGridProps {
   initialNotes: StudyNote[];
@@ -30,9 +30,12 @@ export function NotesGrid({
   const [notes, setNotes] = useState<StudyNote[]>(initialNotes);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingRef = useRef(false);
 
-  async function loadMore() {
-    if (loadingMore || !hasMore) return;
+  const loadMore = useCallback(async () => {
+    if (loadingRef.current || !hasMore) return;
+    loadingRef.current = true;
     setLoadingMore(true);
 
     try {
@@ -65,9 +68,25 @@ export function NotesGrid({
       setHasMore(nextRows.length > PAGE_SIZE);
       setNotes((prev) => [...prev, ...nextRows.slice(0, PAGE_SIZE)]);
     } finally {
+      loadingRef.current = false;
       setLoadingMore(false);
     }
-  }
+  }, [filters, hasMore, notes.length]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          void loadMore();
+        }
+      },
+      { rootMargin: "400px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
 
   return (
     <div className="space-y-8">
@@ -151,7 +170,7 @@ export function NotesGrid({
       </div>
 
       {hasMore && (
-        <div className="flex justify-center pt-2">
+        <div ref={sentinelRef} className="flex justify-center pt-2">
           <Button
             variant="outline"
             size="lg"

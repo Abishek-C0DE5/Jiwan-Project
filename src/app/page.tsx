@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { DEMO_BOOKS } from "@/lib/data/demo";
+import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HeroSection } from "@/components/home/HeroSection";
@@ -10,16 +9,6 @@ import { BookCard } from "@/components/marketplace/BookCard";
 import type { BookListing } from "@/types/database";
 
 async function RecentBooksPreview() {
-  if (!isSupabaseConfigured()) {
-    return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {DEMO_BOOKS.slice(0, 4).map((book) => (
-          <BookCard key={book.id} book={book} />
-        ))}
-      </div>
-    );
-  }
-
   const supabase = await createClient();
   const { data: books } = await supabase
     .from("book_listings")

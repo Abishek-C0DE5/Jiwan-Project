@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -69,75 +69,93 @@ export function DashboardClient({
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
   const [replyingId, setReplyingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const fetchedTabsRef = useRef<Set<string>>(new Set());
 
   const activeBooksCount = myBooks.filter(
     (b) => b.status === "available"
   ).length;
   const soldBooksCount = myBooks.filter((b) => b.status === "sold").length;
 
+  const loadTabData = useCallback(
+    async (
+      key: "notes" | "saved" | "received" | "sent",
+      showSpinner: boolean
+    ) => {
+      if (fetchedTabsRef.current.has(key)) return;
+      fetchedTabsRef.current.add(key);
+
+      if (showSpinner) setTabLoading(true);
+      try {
+        const supabase = createClient();
+        if (key === "notes") {
+          const { data } = await supabase
+            .from("notes")
+            .select("*")
+            .eq("author_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(30);
+          setMyNotes((data as StudyNote[]) || []);
+        } else if (key === "saved") {
+          const { data } = await supabase
+            .from("saved_books")
+            .select("*, book:book_listings(*)")
+            .eq("user_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(30);
+          setSavedBooks((data as SavedBook[]) || []);
+        } else if (key === "received") {
+          const { data } = await supabase
+            .from("inquiries")
+            .select(
+              "*, book:book_listings(id, title, price_npr, status, images), sender:public_profiles!inquiries_sender_id_fkey(*)"
+            )
+            .eq("receiver_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(30);
+          setReceivedInquiries((data as Inquiry[]) || []);
+        } else if (key === "sent") {
+          const { data } = await supabase
+            .from("inquiries")
+            .select(
+              "*, book:book_listings(id, title, price_npr, status, images), receiver:public_profiles!inquiries_receiver_id_fkey(*)"
+            )
+            .eq("sender_id", profile.id)
+            .order("created_at", { ascending: false })
+            .limit(30);
+          setSentInquiries((data as Inquiry[]) || []);
+        }
+      } finally {
+        if (showSpinner) setTabLoading(false);
+      }
+    },
+    [profile.id]
+  );
+
+  // Stagger background prefetching of secondary dashboard tabs after initial paint
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => void loadTabData("notes", false), 250),
+      setTimeout(() => void loadTabData("saved", false), 550),
+      setTimeout(() => void loadTabData("received", false), 850),
+      setTimeout(() => void loadTabData("sent", false), 1150),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [loadTabData]);
+
   async function selectTab(tab: TabKey) {
     setActiveTab(tab);
-    const supabase = createClient();
 
     if (
       (tab === "created_notes" || tab === "uploaded_notes") &&
       myNotes === null
     ) {
-      setTabLoading(true);
-      try {
-        const { data } = await supabase
-          .from("notes")
-          .select("*")
-          .eq("author_id", profile.id)
-          .order("created_at", { ascending: false })
-          .limit(30);
-        setMyNotes((data as StudyNote[]) || []);
-      } finally {
-        setTabLoading(false);
-      }
+      await loadTabData("notes", true);
     } else if (tab === "saved" && savedBooks === null) {
-      setTabLoading(true);
-      try {
-        const { data } = await supabase
-          .from("saved_books")
-          .select("*, book:book_listings(*)")
-          .eq("user_id", profile.id)
-          .order("created_at", { ascending: false })
-          .limit(30);
-        setSavedBooks((data as SavedBook[]) || []);
-      } finally {
-        setTabLoading(false);
-      }
+      await loadTabData("saved", true);
     } else if (tab === "received" && receivedInquiries === null) {
-      setTabLoading(true);
-      try {
-        const { data } = await supabase
-          .from("inquiries")
-          .select(
-            "*, book:book_listings(id, title, price_npr, status, images), sender:public_profiles!inquiries_sender_id_fkey(*)"
-          )
-          .eq("receiver_id", profile.id)
-          .order("created_at", { ascending: false })
-          .limit(30);
-        setReceivedInquiries((data as Inquiry[]) || []);
-      } finally {
-        setTabLoading(false);
-      }
+      await loadTabData("received", true);
     } else if (tab === "sent" && sentInquiries === null) {
-      setTabLoading(true);
-      try {
-        const { data } = await supabase
-          .from("inquiries")
-          .select(
-            "*, book:book_listings(id, title, price_npr, status, images), receiver:public_profiles!inquiries_receiver_id_fkey(*)"
-          )
-          .eq("sender_id", profile.id)
-          .order("created_at", { ascending: false })
-          .limit(30);
-        setSentInquiries((data as Inquiry[]) || []);
-      } finally {
-        setTabLoading(false);
-      }
+      await loadTabData("sent", true);
     }
   }
 

@@ -3,9 +3,7 @@ import { redirect } from "next/navigation";
 import {
   createClient,
   getCurrentUserWithProfile,
-  isSupabaseConfigured,
 } from "@/lib/supabase/server";
-import { DEMO_BOOKS } from "@/lib/data/demo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardClient } from "@/components/dashboard/DashboardClient";
 import type { BookListing } from "@/types/database";
@@ -16,19 +14,9 @@ async function DashboardContent() {
     redirect("/auth/login?redirectTo=/dashboard");
   }
 
-  if (!isSupabaseConfigured()) {
-    return (
-      <DashboardClient
-        profile={profile}
-        initialBooks={DEMO_BOOKS.slice(0, 2)}
-        publishedNotesCount={2}
-      />
-    );
-  }
-
   const supabase = await createClient();
 
-  // Only load initial tab data (myBooks) + lightweight counts; other tabs lazy-load on click
+  // Load initial tab data (first 12 books) + lightweight count; remaining tabs prefetch in background
   const [
     { data: myBooks },
     { count: publishedNotesCount },
@@ -38,7 +26,7 @@ async function DashboardContent() {
       .select("*")
       .eq("seller_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(24),
+      .limit(12),
     supabase
       .from("notes")
       .select("*", { count: "exact", head: true })

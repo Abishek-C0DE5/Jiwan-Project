@@ -23,14 +23,12 @@ interface BookFormProps {
   categories: Category[];
   userId: string;
   initialData?: BookListing;
-  isDemoMode?: boolean;
 }
 
 export function BookForm({
   categories,
   userId,
   initialData,
-  isDemoMode = false,
 }: BookFormProps) {
   const router = useRouter();
   const isEditing = Boolean(initialData);
@@ -115,16 +113,6 @@ export function BookForm({
 
     setSubmitting(true);
     try {
-      if (
-        isDemoMode ||
-        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
-        router.push("/marketplace");
-        router.refresh();
-        return;
-      }
-
       const supabase = createClient();
       const uploadedUrls: string[] = [...existingImages];
 

@@ -1,9 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Check, FileText, FileUp, PenSquare, Search } from "lucide-react";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { EDUCATION_LEVELS } from "@/lib/utils/format";
-import { DEMO_NOTES } from "@/lib/data/demo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -11,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { NotesGrid } from "@/components/notes/NotesGrid";
 import type { StudyNote } from "@/types/database";
 
-const INITIAL_PAGE_SIZE = 12;
+const INITIAL_PAGE_SIZE = 9;
 
 interface NotesSearchParams {
   q?: string;
@@ -115,45 +114,6 @@ async function NotesContent({
   searchParamsPromise: Promise<NotesSearchParams>;
 }) {
   const params = await searchParamsPromise;
-
-  if (!isSupabaseConfigured()) {
-    let filtered = [...DEMO_NOTES];
-    if (params.q) {
-      const q = params.q.trim().toLowerCase();
-      filtered = filtered.filter(
-        (n) =>
-          n.title.toLowerCase().includes(q) ||
-          n.subject.toLowerCase().includes(q) ||
-          (n.topic || "").toLowerCase().includes(q)
-      );
-    }
-    if (params.level) {
-      filtered = filtered.filter((n) => n.education_level === params.level);
-    }
-    if (params.type === "created" || params.type === "pdf") {
-      filtered = filtered.filter((n) => n.note_type === params.type);
-    }
-
-    return (
-      <div className="space-y-6">
-        <NotesFilterBar params={params} />
-        {filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center space-y-3">
-            <FileText className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
-            <p className="font-medium text-foreground">No matching notes found</p>
-          </div>
-        ) : (
-          <NotesGrid
-            key={JSON.stringify(params)}
-            initialNotes={filtered}
-            initialHasMore={false}
-            filters={params}
-          />
-        )}
-      </div>
-    );
-  }
-
   const supabase = await createClient();
 
   let query = supabase

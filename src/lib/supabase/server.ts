@@ -1,14 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { DEMO_COOKIE_NAME, getDemoAccountByRole } from "@/lib/auth/demo";
 import type { Profile } from "@/types/database";
-
-export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
-}
 
 export async function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,19 +37,6 @@ export async function getCurrentUserWithProfile(): Promise<{
   user: { id: string; email?: string } | null;
   profile: Profile | null;
 }> {
-  if (!isSupabaseConfigured()) {
-    const cookieStore = await cookies();
-    const demoRole = cookieStore.get(DEMO_COOKIE_NAME)?.value;
-    const demoAccount = getDemoAccountByRole(demoRole);
-    if (demoAccount) {
-      return {
-        user: demoAccount.user,
-        profile: demoAccount.profile,
-      };
-    }
-    return { user: null, profile: null };
-  }
-
   const supabase = await createClient();
   const {
     data: { user },

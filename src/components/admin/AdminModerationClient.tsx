@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -18,23 +18,25 @@ import {
   Users,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { CollegeNotice } from "@/lib/auth/demo";
+import type { CollegeNotice } from "@/lib/constants/notices";
 import { formatDate, formatNPR } from "@/lib/utils/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { BookListing, Profile, Report, StudyNote } from "@/types/database";
 
 interface AdminModerationClientProps {
   adminId: string;
   adminEmail: string;
-  isDemoMode: boolean;
   reports: Report[];
-  users: Profile[];
-  books: BookListing[];
-  notes: StudyNote[];
+  initialCounts: {
+    totalUsers: number;
+    activeBooks: number;
+    activeNotes: number;
+  };
   notices: CollegeNotice[];
 }
 
@@ -43,42 +45,97 @@ type AdminTab = "reports" | "books" | "notes" | "users" | "notices";
 export function AdminModerationClient({
   adminId,
   adminEmail,
-  isDemoMode,
   reports: initialReports,
-  users: initialUsers,
-  books: initialBooks,
-  notes: initialNotes,
+  initialCounts,
   notices: initialNotices,
 }: AdminModerationClientProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<AdminTab>("reports");
   const [reports, setReports] = useState<Report[]>(initialReports);
-  const [users, setUsers] = useState<Profile[]>(initialUsers);
-  const [books, setBooks] = useState<BookListing[]>(initialBooks);
-  const [notes, setNotes] = useState<StudyNote[]>(initialNotes);
+  const [users, setUsers] = useState<Profile[] | null>(null);
+  const [books, setBooks] = useState<BookListing[] | null>(null);
+  const [notes, setNotes] = useState<StudyNote[] | null>(null);
   const [notices, setNotices] = useState<CollegeNotice[]>(initialNotices);
+  const [tabLoading, setTabLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [newNoticeTitle, setNewNoticeTitle] = useState("");
   const [newNoticeHref, setNewNoticeHref] = useState("/marketplace");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const fetchedTabsRef = useRef<Set<string>>(new Set());
+
+  const loadAdminTab = useCallback(
+    async (tab: "books" | "notes" | "users", showSpinner: boolean) => {
+      if (fetchedTabsRef.current.has(tab)) return;
+      fetchedTabsRef.current.add(tab);
+      if (showSpinner) setTabLoading(true);
+      try {
+        const supabase = createClient();
+        if (tab === "books") {
+          const { data } = await supabase
+            .from("book_listings")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(40);
+          setBooks((data as BookListing[]) || []);
+        } else if (tab === "notes") {
+          const { data } = await supabase
+            .from("notes")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(40);
+          setNotes((data as StudyNote[]) || []);
+        } else if (tab === "users") {
+          const { data } = await supabase
+            .from("profiles")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(40);
+          setUsers((data as Profile[]) || []);
+        }
+      } finally {
+        if (showSpinner) setTabLoading(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => void loadAdminTab("books", false), 250),
+      setTimeout(() => void loadAdminTab("notes", false), 550),
+      setTimeout(() => void loadAdminTab("users", false), 850),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [loadAdminTab]);
+
+  async function selectTab(tab: AdminTab) {
+    setActiveTab(tab);
+    if (tab === "books" && books === null) await loadAdminTab("books", true);
+    else if (tab === "notes" && notes === null) await loadAdminTab("notes", true);
+    else if (tab === "users" && users === null) await loadAdminTab("users", true);
+  }
 
   const liveStats = useMemo(
     () => ({
-      totalUsers: users.length,
-      activeBooks: books.filter((b) => b.status === "available").length,
-      activeNotes: notes.filter((n) => n.status === "active").length,
+      totalUsers: users ? users.length : initialCounts.totalUsers,
+      activeBooks: books
+        ? books.filter((b) => b.status === "available").length
+        : initialCounts.activeBooks,
+      activeNotes: notes
+        ? notes.filter((n) => n.status === "active").length
+        : initialCounts.activeNotes,
       pendingReports: reports.filter((r) => r.status === "pending").length,
     }),
-    [users, books, notes, reports]
+    [users, books, notes, reports, initialCounts]
   );
 
   const q = searchQuery.trim().toLowerCase();
 
   const filteredBooks = useMemo(
     () =>
-      books.filter(
+      (books ?? []).filter(
         (b) =>
           !q ||
           b.title.toLowerCase().includes(q) ||
@@ -90,7 +147,7 @@ export function AdminModerationClient({
 
   const filteredNotes = useMemo(
     () =>
-      notes.filter(
+      (notes ?? []).filter(
         (n) =>
           !q ||
           n.title.toLowerCase().includes(q) ||
@@ -101,7 +158,7 @@ export function AdminModerationClient({
 
   const filteredUsers = useMemo(
     () =>
-      users.filter(
+      (users ?? []).filter(
         (u) =>
           !q ||
           u.full_name.toLowerCase().includes(q) ||
@@ -114,39 +171,37 @@ export function AdminModerationClient({
     setBusyId(report.id);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        if (report.target_type === "book") {
-          await supabase
-            .from("book_listings")
-            .update({ status: "removed" })
-            .eq("id", report.target_id);
-        } else {
-          await supabase
-            .from("notes")
-            .update({ status: "removed" })
-            .eq("id", report.target_id);
-        }
+      const supabase = createClient();
+      if (report.target_type === "book") {
         await supabase
-          .from("reports")
-          .update({ status: "action_taken", reviewed_by: adminId })
-          .eq("id", report.id);
-        router.refresh();
+          .from("book_listings")
+          .update({ status: "removed" })
+          .eq("id", report.target_id);
+        setBooks((prev) =>
+          prev
+            ? prev.map((b) =>
+                b.id === report.target_id ? { ...b, status: "removed" } : b
+              )
+            : prev
+        );
       } else {
-        if (report.target_type === "book") {
-          setBooks((prev) =>
-            prev.map((b) =>
-              b.id === report.target_id ? { ...b, status: "removed" } : b
-            )
-          );
-        } else {
-          setNotes((prev) =>
-            prev.map((n) =>
-              n.id === report.target_id ? { ...n, status: "removed" } : n
-            )
-          );
-        }
+        await supabase
+          .from("notes")
+          .update({ status: "removed" })
+          .eq("id", report.target_id);
+        setNotes((prev) =>
+          prev
+            ? prev.map((n) =>
+                n.id === report.target_id ? { ...n, status: "removed" } : n
+              )
+            : prev
+        );
       }
+      await supabase
+        .from("reports")
+        .update({ status: "action_taken", reviewed_by: adminId })
+        .eq("id", report.id);
+      router.refresh();
       setReports((prev) =>
         prev.map((r) =>
           r.id === report.id
@@ -164,14 +219,12 @@ export function AdminModerationClient({
     setBusyId(reportId);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase
-          .from("reports")
-          .update({ status: "dismissed", reviewed_by: adminId })
-          .eq("id", reportId);
-        router.refresh();
-      }
+      const supabase = createClient();
+      await supabase
+        .from("reports")
+        .update({ status: "dismissed", reviewed_by: adminId })
+        .eq("id", reportId);
+      router.refresh();
       setReports((prev) =>
         prev.map((r) =>
           r.id === reportId
@@ -192,16 +245,16 @@ export function AdminModerationClient({
     setBusyId(book.id);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase
-          .from("book_listings")
-          .update({ status: nextStatus })
-          .eq("id", book.id);
-        router.refresh();
-      }
+      const supabase = createClient();
+      await supabase
+        .from("book_listings")
+        .update({ status: nextStatus })
+        .eq("id", book.id);
+      router.refresh();
       setBooks((prev) =>
-        prev.map((b) => (b.id === book.id ? { ...b, status: nextStatus } : b))
+        prev
+          ? prev.map((b) => (b.id === book.id ? { ...b, status: nextStatus } : b))
+          : prev
       );
       setFeedback(`Book "${book.title}" marked as ${nextStatus}.`);
     } finally {
@@ -213,12 +266,10 @@ export function AdminModerationClient({
     setBusyId(bookId);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase.from("book_listings").delete().eq("id", bookId);
-        router.refresh();
-      }
-      setBooks((prev) => prev.filter((b) => b.id !== bookId));
+      const supabase = createClient();
+      await supabase.from("book_listings").delete().eq("id", bookId);
+      router.refresh();
+      setBooks((prev) => (prev ? prev.filter((b) => b.id !== bookId) : prev));
       setFeedback(`Deleted book "${title}".`);
     } finally {
       setBusyId(null);
@@ -232,16 +283,16 @@ export function AdminModerationClient({
     setBusyId(note.id);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase
-          .from("notes")
-          .update({ status: nextStatus })
-          .eq("id", note.id);
-        router.refresh();
-      }
+      const supabase = createClient();
+      await supabase
+        .from("notes")
+        .update({ status: nextStatus })
+        .eq("id", note.id);
+      router.refresh();
       setNotes((prev) =>
-        prev.map((n) => (n.id === note.id ? { ...n, status: nextStatus } : n))
+        prev
+          ? prev.map((n) => (n.id === note.id ? { ...n, status: nextStatus } : n))
+          : prev
       );
       setFeedback(`Note "${note.title}" updated to ${nextStatus}.`);
     } finally {
@@ -253,12 +304,10 @@ export function AdminModerationClient({
     setBusyId(noteId);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase.from("notes").delete().eq("id", noteId);
-        router.refresh();
-      }
-      setNotes((prev) => prev.filter((n) => n.id !== noteId));
+      const supabase = createClient();
+      await supabase.from("notes").delete().eq("id", noteId);
+      router.refresh();
+      setNotes((prev) => (prev ? prev.filter((n) => n.id !== noteId) : prev));
       setFeedback(`Deleted note "${title}".`);
     } finally {
       setBusyId(null);
@@ -270,18 +319,18 @@ export function AdminModerationClient({
     setBusyId(user.id);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase
-          .from("profiles")
-          .update({ is_suspended: !user.is_suspended })
-          .eq("id", user.id);
-        router.refresh();
-      }
+      const supabase = createClient();
+      await supabase
+        .from("profiles")
+        .update({ is_suspended: !user.is_suspended })
+        .eq("id", user.id);
+      router.refresh();
       setUsers((prev) =>
-        prev.map((u) =>
-          u.id === user.id ? { ...u, is_suspended: !u.is_suspended } : u
-        )
+        prev
+          ? prev.map((u) =>
+              u.id === user.id ? { ...u, is_suspended: !u.is_suspended } : u
+            )
+          : prev
       );
       setFeedback(
         user.is_suspended
@@ -299,16 +348,16 @@ export function AdminModerationClient({
     setBusyId(user.id);
     setFeedback(null);
     try {
-      if (!isDemoMode) {
-        const supabase = createClient();
-        await supabase
-          .from("profiles")
-          .update({ role: nextRole })
-          .eq("id", user.id);
-        router.refresh();
-      }
+      const supabase = createClient();
+      await supabase
+        .from("profiles")
+        .update({ role: nextRole })
+        .eq("id", user.id);
+      router.refresh();
       setUsers((prev) =>
-        prev.map((u) => (u.id === user.id ? { ...u, role: nextRole } : u))
+        prev
+          ? prev.map((u) => (u.id === user.id ? { ...u, role: nextRole } : u))
+          : prev
       );
       setFeedback(`Updated ${user.full_name}'s role to ${nextRole}.`);
     } finally {
@@ -344,9 +393,9 @@ export function AdminModerationClient({
 
   const tabs: { id: AdminTab; label: string; count?: number; icon: React.ElementType }[] = [
     { id: "reports", label: "Reports", count: liveStats.pendingReports, icon: ShieldAlert },
-    { id: "books", label: "Books", count: books.length, icon: BookOpen },
-    { id: "notes", label: "Study Notes", count: notes.length, icon: FileText },
-    { id: "users", label: "Students", count: users.length, icon: Users },
+    { id: "books", label: "Books", count: books ? books.length : initialCounts.activeBooks, icon: BookOpen },
+    { id: "notes", label: "Study Notes", count: notes ? notes.length : initialCounts.activeNotes, icon: FileText },
+    { id: "users", label: "Students", count: users ? users.length : initialCounts.totalUsers, icon: Users },
     { id: "notices", label: "Notices", count: notices.length, icon: Bell },
   ];
 
@@ -358,7 +407,6 @@ export function AdminModerationClient({
           <ShieldCheck className="h-4 w-4 text-[#f2a51a]" />
           <span>
             Signed in as <strong>{adminEmail}</strong>
-            {isDemoMode && " · Demo Mode (changes update local preview state)"}
           </span>
         </div>
         <Badge className="bg-[#12434d] text-white">Admin Access</Badge>
@@ -412,7 +460,7 @@ export function AdminModerationClient({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => void selectTab(tab.id)}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer ${
                   active
                     ? "bg-[#12434d] text-white shadow-xs"
@@ -449,6 +497,14 @@ export function AdminModerationClient({
           </div>
         )}
       </div>
+
+      {tabLoading && (activeTab === "books" || activeTab === "notes" || activeTab === "users") && (
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-20 w-full rounded-xl" />
+          ))}
+        </div>
+      )}
 
       {/* TAB 1: REPORTS */}
       {activeTab === "reports" && (

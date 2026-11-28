@@ -5,7 +5,6 @@ import { ArrowLeft, Calendar, Download, FileText, Lock } from "lucide-react";
 import {
   createClient,
   getCurrentUserWithProfile,
-  isSupabaseConfigured,
 } from "@/lib/supabase/server";
 import { formatDate, formatFileSize } from "@/lib/utils/format";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +14,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NoteContentRenderer } from "@/components/notes/NoteContentRenderer";
 import { NoteDetailActions } from "@/components/notes/NoteDetailActions";
-import { DEMO_NOTES, DEMO_PROFILES } from "@/lib/data/demo";
 import type { PublicProfile, StudyNote } from "@/types/database";
 
 async function NoteDetailContent({
@@ -24,91 +22,6 @@ async function NoteDetailContent({
   paramsPromise: Promise<{ id: string }>;
 }) {
   const { id } = await paramsPromise;
-
-  if (!isSupabaseConfigured()) {
-    const demoNote = DEMO_NOTES.find((n) => n.id === id);
-    if (!demoNote) notFound();
-    const demoAuthor = DEMO_PROFILES[demoNote.author_id] || null;
-
-    return (
-      <div className="space-y-6">
-        <Link
-          href="/notes"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Study Notes
-        </Link>
-
-        <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant={demoNote.note_type === "pdf" ? "warning" : "default"}>
-              {demoNote.note_type === "pdf" ? "PDF Document" : "Written Note"}
-            </Badge>
-            <Badge variant="outline">{demoNote.subject}</Badge>
-            <Badge variant="outline">{demoNote.education_level}</Badge>
-            {demoNote.topic && <Badge variant="muted">{demoNote.topic}</Badge>}
-          </div>
-
-          <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-            {demoNote.title}
-          </h1>
-
-          {demoNote.description && (
-            <p className="text-sm text-muted-foreground">{demoNote.description}</p>
-          )}
-
-          <div className="flex flex-col gap-4 pt-3 border-t border-border sm:flex-row sm:items-center sm:justify-between">
-            {demoAuthor && (
-              <Link
-                href={`/profile/${demoAuthor.id}`}
-                className="flex items-center gap-2.5 group"
-              >
-                <Avatar src={demoAuthor.avatar_url} name={demoAuthor.full_name} size="sm" />
-                <div>
-                  <p className="text-sm font-medium text-foreground group-hover:text-primary">
-                    {demoAuthor.full_name}
-                  </p>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(demoNote.created_at)}
-                  </p>
-                </div>
-              </Link>
-            )}
-          </div>
-        </div>
-
-        {demoNote.note_type === "created" ? (
-          <Card>
-            <CardContent className="p-6">
-              {demoNote.content && <NoteContentRenderer content={demoNote.content} />}
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="p-6 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2.5">
-                <FileText className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    {demoNote.file_name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    PDF &middot; {formatFileSize(demoNote.file_size)} &middot; Preview available when Supabase Storage is connected
-                  </p>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" disabled>
-                <Download className="h-4 w-4" />
-                Download PDF
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
-  }
 
   const supabase = await createClient();
   const { user } = await getCurrentUserWithProfile();

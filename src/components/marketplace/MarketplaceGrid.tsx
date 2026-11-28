@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookCard } from "@/components/marketplace/BookCard";
 import type { BookListing } from "@/types/database";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 8;
 
 interface MarketplaceGridProps {
   initialBooks: BookListing[];
@@ -30,9 +30,12 @@ export function MarketplaceGrid({
   const [books, setBooks] = useState<BookListing[]>(initialBooks);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingRef = useRef(false);
 
-  async function loadMore() {
-    if (loadingMore || !hasMore) return;
+  const loadMore = useCallback(async () => {
+    if (loadingRef.current || !hasMore) return;
+    loadingRef.current = true;
     setLoadingMore(true);
 
     try {
@@ -75,9 +78,25 @@ export function MarketplaceGrid({
       setHasMore(nextRows.length > PAGE_SIZE);
       setBooks((prev) => [...prev, ...nextRows.slice(0, PAGE_SIZE)]);
     } finally {
+      loadingRef.current = false;
       setLoadingMore(false);
     }
-  }
+  }, [books.length, filters, hasMore]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          void loadMore();
+        }
+      },
+      { rootMargin: "400px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
 
   return (
     <div className="space-y-8">
@@ -104,7 +123,7 @@ export function MarketplaceGrid({
       </div>
 
       {hasMore && (
-        <div className="flex justify-center pt-2">
+        <div ref={sentinelRef} className="flex justify-center pt-2">
           <Button
             variant="outline"
             size="lg"

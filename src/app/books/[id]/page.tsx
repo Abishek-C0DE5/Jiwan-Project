@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Calendar, GraduationCap, MapPin } from "lucide-react";
-import { createClient, getCurrentUserWithProfile, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient, getCurrentUserWithProfile } from "@/lib/supabase/server";
 import { formatDate, formatNPR } from "@/lib/utils/format";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookGallery } from "@/components/marketplace/BookGallery";
 import { BookDetailActions } from "@/components/marketplace/BookDetailActions";
-import { DEMO_BOOKS, DEMO_PROFILES } from "@/lib/data/demo";
 import type { BookListing, PublicProfile } from "@/types/database";
 
 async function BookDetailContent({
@@ -19,125 +18,6 @@ async function BookDetailContent({
   paramsPromise: Promise<{ id: string }>;
 }) {
   const { id } = await paramsPromise;
-
-  if (!isSupabaseConfigured()) {
-    const demoBook = DEMO_BOOKS.find((b) => b.id === id);
-    if (!demoBook) notFound();
-    const demoSeller = DEMO_PROFILES[demoBook.seller_id] || null;
-
-    return (
-      <div className="space-y-6">
-        <Link
-          href="/marketplace"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Marketplace
-        </Link>
-
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-7 space-y-6">
-            <BookGallery images={demoBook.images} title={demoBook.title} />
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <h2 className="font-semibold text-foreground">About this book</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
-                  {demoBook.description}
-                </p>
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Author:</span>{" "}
-                    <span className="font-medium">{demoBook.author}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Subject:</span>{" "}
-                    <span className="font-medium">{demoBook.subject}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Category:</span>{" "}
-                    <span className="font-medium">{demoBook.category?.name || "General"}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Level:</span>{" "}
-                    <span className="font-medium">{demoBook.education_level}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-5 space-y-5">
-            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>{demoBook.condition}</Badge>
-                <Badge variant="success">Available</Badge>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">{demoBook.title}</h1>
-                <p className="text-sm text-muted-foreground mt-1">by {demoBook.author}</p>
-              </div>
-              <div className="flex items-baseline gap-3">
-                <span className="text-2xl font-bold text-primary">
-                  {formatNPR(demoBook.price_npr)}
-                </span>
-                {demoBook.original_price_npr && (
-                  <span className="text-sm text-muted-foreground line-through">
-                    {formatNPR(demoBook.original_price_npr)}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-4 text-xs text-muted-foreground pt-2 border-t border-border">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {demoBook.location}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
-                  Listed {formatDate(demoBook.created_at)}
-                </span>
-              </div>
-            </div>
-
-            {demoSeller && (
-              <Card>
-                <CardContent className="p-4 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Avatar src={demoSeller.avatar_url} name={demoSeller.full_name} />
-                    <div className="min-w-0">
-                      <Link
-                        href={`/profile/${demoSeller.id}`}
-                        className="font-semibold text-sm text-foreground hover:text-primary truncate block"
-                      >
-                        {demoSeller.full_name}
-                      </Link>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 truncate">
-                        <GraduationCap className="h-3.5 w-3.5 shrink-0" />
-                        {demoSeller.institution || demoSeller.education_level || "Student"}
-                      </p>
-                    </div>
-                  </div>
-                  <Link
-                    href={`/profile/${demoSeller.id}`}
-                    className="text-xs font-medium text-primary hover:underline shrink-0"
-                  >
-                    View profile
-                  </Link>
-                </CardContent>
-              </Card>
-            )}
-
-            <BookDetailActions
-              bookId={demoBook.id}
-              sellerId={demoBook.seller_id}
-              status={demoBook.status}
-              currentUserId={null}
-              initialSaved={false}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const supabase = await createClient();
   const { user } = await getCurrentUserWithProfile();

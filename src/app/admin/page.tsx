@@ -3,17 +3,11 @@ import { redirect } from "next/navigation";
 import {
   createClient,
   getCurrentUserWithProfile,
-  isSupabaseConfigured,
 } from "@/lib/supabase/server";
-import {
-  DEMO_ADMIN_USERS,
-  DEMO_NOTICES,
-  DEMO_REPORTS,
-} from "@/lib/auth/demo";
-import { DEMO_BOOKS, DEMO_NOTES } from "@/lib/data/demo";
+import { DEFAULT_NOTICES } from "@/lib/constants/notices";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminModerationClient } from "@/components/admin/AdminModerationClient";
-import type { BookListing, Profile, Report, StudyNote } from "@/types/database";
+import type { Report } from "@/types/database";
 
 async function AdminContent() {
   const { user, profile } = await getCurrentUserWithProfile();
@@ -26,63 +20,42 @@ async function AdminContent() {
     redirect("/dashboard");
   }
 
-  if (!isSupabaseConfigured()) {
-    return (
-      <AdminModerationClient
-        adminId={user.id}
-        adminEmail={profile.email}
-        isDemoMode={true}
-        reports={DEMO_REPORTS}
-        users={DEMO_ADMIN_USERS}
-        books={DEMO_BOOKS}
-        notes={DEMO_NOTES}
-        notices={DEMO_NOTICES}
-      />
-    );
-  }
-
   const supabase = await createClient();
 
+  // Only fetch the initial Reports tab + lightweight head counts; other tabs lazy/background load
   const [
     { data: reports },
-    { data: users },
-    { data: books },
-    { data: notes },
+    { count: totalUsers },
+    { count: activeBooks },
+    { count: activeNotes },
   ] = await Promise.all([
     supabase
       .from("reports")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(50),
-    supabase
-      .from("profiles")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50),
+      .limit(25),
+    supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase
       .from("book_listings")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50),
+      .select("*", { count: "exact", head: true })
+      .eq("status", "available"),
     supabase
       .from("notes")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50),
+      .select("*", { count: "exact", head: true })
+      .eq("status", "active"),
   ]);
-
-  const reportList = (reports as Report[]) || [];
 
   return (
     <AdminModerationClient
       adminId={user.id}
       adminEmail={profile.email}
-      isDemoMode={false}
-      reports={reportList}
-      users={(users as Profile[]) || []}
-      books={(books as BookListing[]) || []}
-      notes={(notes as StudyNote[]) || []}
-      notices={DEMO_NOTICES}
+      reports={(reports as Report[]) || []}
+      initialCounts={{
+        totalUsers: totalUsers ?? 0,
+        activeBooks: activeBooks ?? 0,
+        activeNotes: activeNotes ?? 0,
+      }}
+      notices={DEFAULT_NOTICES}
     />
   );
 }

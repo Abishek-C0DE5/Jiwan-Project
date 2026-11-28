@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GraduationCap, MapPin } from "lucide-react";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils/format";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,14 +16,6 @@ async function PublicProfileContent({
 }: {
   paramsPromise: Promise<{ id: string }>;
 }) {
-  if (!isSupabaseConfigured()) {
-    return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        Supabase is not configured yet.
-      </div>
-    );
-  }
-
   const { id } = await paramsPromise;
   const supabase = await createClient();
 
