@@ -93,7 +93,7 @@ export default function AdminPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-5">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#12434d]">
-            Godawari College · Administration
+            Sushma Godawari Student Hub · Administration
           </p>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-1">
             Admin Control Panel

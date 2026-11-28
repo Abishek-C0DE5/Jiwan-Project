@@ -167,7 +167,7 @@ function LoginForm() {
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              New to Godawari College Hub?{" "}
+              New to Sushma Godawari Student Hub?{" "}
               <Link
                 href="/auth/signup"
                 className="font-medium text-primary hover:underline"

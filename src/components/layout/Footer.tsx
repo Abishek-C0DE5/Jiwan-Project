@@ -11,14 +11,14 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <Image
                 src="/images/college-logo.jpg"
-                alt="Godawari College Logo"
+                alt="Sushma Godawari Student Hub Logo"
                 width={40}
                 height={40}
                 className="h-10 w-10 rounded-full object-cover border border-white/20"
               />
               <div>
                 <p className="font-serif text-base font-bold text-white">
-                  Godawari College
+                  Sushma Godawari Student Hub
                 </p>
                 <p className="text-[11px] text-[#f4b63e]">
                   Itahari, Sunsari · Est. 1992 AD
@@ -96,7 +96,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/15 pt-5 flex flex-col sm:flex-row justify-between gap-2 text-xs text-white/65">
-          <p>&copy; 2026 Godawari College. All rights reserved.</p>
+          <p>&copy; 2026 Sushma Godawari Student Hub. All rights reserved.</p>
           <p>Itahari, Sunsari, Nepal · Affiliated with Tribhuvan University</p>
         </div>
       </div>

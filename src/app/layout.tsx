@@ -25,9 +25,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Godawari College — Student Academic & Marketplace Hub",
+  title: "Sushma Godawari Student Hub",
   description:
-    "Godawari College student portal: buy and sell second-hand textbooks, share study notes, and watch focused educational videos.",
+    "Sushma Godawari Student Hub: buy and sell second-hand textbooks, share study notes, and watch focused educational videos.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

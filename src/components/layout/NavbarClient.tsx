@@ -99,7 +99,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
           >
             <Image
               src="/images/college-logo.jpg"
-              alt="Godawari College Logo"
+              alt="Sushma Godawari Student Hub Logo"
               width={44}
               height={44}
               priority
@@ -107,7 +107,7 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
             />
             <div className="min-w-0">
               <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#12434d] block leading-tight">
-                Godawari College
+                Sushma Godawari Student Hub
               </span>
               <span className="hidden sm:block text-[11px] font-medium text-muted-foreground">
                 A Place Where Dreams Are Nurtured
@@ -278,13 +278,13 @@ export function NavbarClient({ user, profile }: NavbarClientProps) {
                 >
                   <Image
                     src="/images/college-logo.jpg"
-                    alt="Godawari College"
+                    alt="Sushma Godawari Student Hub"
                     width={36}
                     height={36}
                     className="h-9 w-9 rounded-full object-cover border border-[#12434d]/20"
                   />
                   <span className="font-serif text-base font-bold text-[#12434d]">
-                    Godawari College
+                    Sushma Godawari Student Hub
                   </span>
                 </Link>
                 <button
